@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amadeus.Bot", "Amadeus.Bot\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amadeus.Db", "Amadeus.Db\Amadeus.Db.csproj", "{0D21864E-1099-4E5A-BE4A-735E5EA2913F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amadeus.Web", "Amadeus.Web\Amadeus.Web.csproj", "{EBCFDBE8-D95F-476C-90C9-8F0DDCBFF385}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{0D21864E-1099-4E5A-BE4A-735E5EA2913F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D21864E-1099-4E5A-BE4A-735E5EA2913F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D21864E-1099-4E5A-BE4A-735E5EA2913F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBCFDBE8-D95F-476C-90C9-8F0DDCBFF385}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBCFDBE8-D95F-476C-90C9-8F0DDCBFF385}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBCFDBE8-D95F-476C-90C9-8F0DDCBFF385}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBCFDBE8-D95F-476C-90C9-8F0DDCBFF385}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
