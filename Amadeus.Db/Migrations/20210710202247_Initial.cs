@@ -11,7 +11,7 @@ namespace Amadeus.Db.Migrations
                 .Annotation("Npgsql:Enum:cs_type", "string,boolean,int,char");
 
             migrationBuilder.CreateTable(
-                name: "config_option_category",
+                name: "config_option_categories",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -21,7 +21,7 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_config_option_category", x => x.id);
+                    table.PrimaryKey("pk_config_option_categories", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,7 +36,7 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "config_option",
+                name: "config_options",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -49,17 +49,17 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_config_option", x => x.id);
+                    table.PrimaryKey("pk_config_options", x => x.id);
                     table.ForeignKey(
-                        name: "fk_config_option_config_option_category_config_option_category",
+                        name: "fk_config_options_config_option_categories_config_option_categ",
                         column: x => x.config_option_category_id,
-                        principalTable: "config_option_category",
+                        principalTable: "config_option_categories",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "config",
+                name: "configs",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -70,15 +70,15 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_config", x => x.id);
+                    table.PrimaryKey("pk_configs", x => x.id);
                     table.ForeignKey(
-                        name: "fk_config_config_option_config_option_id",
+                        name: "fk_configs_config_options_config_option_id",
                         column: x => x.config_option_id,
-                        principalTable: "config_option",
+                        principalTable: "config_options",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_config_guilds_guild_id",
+                        name: "fk_configs_guilds_guild_id",
                         column: x => x.guild_id,
                         principalTable: "guilds",
                         principalColumn: "id",
@@ -86,34 +86,34 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_config_config_option_id",
-                table: "config",
+                name: "ix_config_options_config_option_category_id",
+                table: "config_options",
+                column: "config_option_category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_configs_config_option_id",
+                table: "configs",
                 column: "config_option_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_config_guild_id",
-                table: "config",
+                name: "ix_configs_guild_id",
+                table: "configs",
                 column: "guild_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_config_option_config_option_category_id",
-                table: "config_option",
-                column: "config_option_category_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "config");
+                name: "configs");
 
             migrationBuilder.DropTable(
-                name: "config_option");
+                name: "config_options");
 
             migrationBuilder.DropTable(
                 name: "guilds");
 
             migrationBuilder.DropTable(
-                name: "config_option_category");
+                name: "config_option_categories");
         }
     }
 }

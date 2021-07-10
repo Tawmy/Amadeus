@@ -45,9 +45,9 @@ namespace Amadeus.Bot.Handlers
             var argPos = 0;
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasCharPrefix(
-                      await ConfigHelper.GetChar("CommandPrefix", messageParam.Reference.GuildId.ToNullable()),
-                      ref argPos) ||
+            var c = messageParam.Channel as SocketGuildChannel;
+            var p = await ConfigHelper.GetChar("CommandPrefix", c?.Guild.Id);
+            if (!(message.HasCharPrefix(p, ref argPos) ||
                   message.HasMentionPrefix(_client.CurrentUser, ref argPos)) ||
                 message.Author.IsBot)
                 return;

@@ -10,15 +10,33 @@ namespace Amadeus.Db
 {
     public class AmadeusContext : DbContext
     {
+        // constructor for API
         public AmadeusContext(DbContextOptions<AmadeusContext> options) : base(options)
+        {
+        }
+
+        // constructor for EntityRepository
+        public AmadeusContext()
         {
         }
 
         #region DbSets
 
+        public DbSet<Config> Configs { get; set; }
+        public DbSet<ConfigOption> ConfigOptions { get; set; }
+        public DbSet<ConfigOptionCategory> ConfigOptionCategories { get; set; }
         public DbSet<Guild> Guilds { get; set; }
 
         #endregion
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql(Configuration.ConnectionString).UseSnakeCaseNamingConvention();
+            }
+            base.OnConfiguring(optionsBuilder);
+        }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -28,18 +46,13 @@ namespace Amadeus.Db
     }
 
     // Necessary for using EF migrations in Db project
-    // Reference: https://medium.com/oppr/net-core-using-entity-framework-core-in-a-separate-project-e8636f9dc9e5
-    // Thank you Mr. Santos
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AmadeusContext>
     {
         public AmadeusContext CreateDbContext(string[] args)
         {
-            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(Directory.GetCurrentDirectory() + "/../Amadeus.Web/appsettings.json").Build();
-            var builder = new DbContextOptionsBuilder<AmadeusContext>();
-            var connectionString = configuration.GetConnectionString("AmadeusDev");
-            builder.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
-            return new AmadeusContext(builder.Options);
+            var b = new DbContextOptionsBuilder<AmadeusContext>();
+            b.UseNpgsql(Configuration.ConnectionString).UseSnakeCaseNamingConvention();
+            return new AmadeusContext(b.Options);
         }
     }
 }

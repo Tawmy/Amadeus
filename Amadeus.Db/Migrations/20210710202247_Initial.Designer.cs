@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Amadeus.Db.Migrations
 {
     [DbContext(typeof(AmadeusContext))]
-    [Migration("20210710184934_Initial")]
+    [Migration("20210710202247_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,15 +43,15 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("value");
 
                     b.HasKey("Id")
-                        .HasName("pk_config");
+                        .HasName("pk_configs");
 
                     b.HasIndex("ConfigOptionId")
-                        .HasDatabaseName("ix_config_config_option_id");
+                        .HasDatabaseName("ix_configs_config_option_id");
 
                     b.HasIndex("GuildId")
-                        .HasDatabaseName("ix_config_guild_id");
+                        .HasDatabaseName("ix_configs_guild_id");
 
-                    b.ToTable("config");
+                    b.ToTable("configs");
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.ConfigOption", b =>
@@ -85,12 +85,12 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_config_option");
+                        .HasName("pk_config_options");
 
                     b.HasIndex("ConfigOptionCategoryId")
-                        .HasDatabaseName("ix_config_option_config_option_category_id");
+                        .HasDatabaseName("ix_config_options_config_option_category_id");
 
-                    b.ToTable("config_option");
+                    b.ToTable("config_options");
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.ConfigOptionCategory", b =>
@@ -112,9 +112,9 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_config_option_category");
+                        .HasName("pk_config_option_categories");
 
-                    b.ToTable("config_option_category");
+                    b.ToTable("config_option_categories");
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.Guild", b =>
@@ -134,14 +134,14 @@ namespace Amadeus.Db.Migrations
                     b.HasOne("Amadeus.Db.Models.ConfigOption", "ConfigOption")
                         .WithMany("Configs")
                         .HasForeignKey("ConfigOptionId")
-                        .HasConstraintName("fk_config_config_option_config_option_id")
+                        .HasConstraintName("fk_configs_config_options_config_option_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Amadeus.Db.Models.Guild", "Guild")
                         .WithMany("Configs")
                         .HasForeignKey("GuildId")
-                        .HasConstraintName("fk_config_guilds_guild_id")
+                        .HasConstraintName("fk_configs_guilds_guild_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -155,7 +155,7 @@ namespace Amadeus.Db.Migrations
                     b.HasOne("Amadeus.Db.Models.ConfigOptionCategory", "ConfigOptionCategory")
                         .WithMany("ConfigOptions")
                         .HasForeignKey("ConfigOptionCategoryId")
-                        .HasConstraintName("fk_config_option_config_option_category_config_option_category")
+                        .HasConstraintName("fk_config_options_config_option_categories_config_option_categ")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

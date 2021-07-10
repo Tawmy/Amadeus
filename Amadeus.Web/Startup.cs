@@ -20,7 +20,7 @@ namespace Amadeus.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var conn = Configuration.GetConnectionString("AmadeusDev");
+            var conn = Amadeus.Db.Configuration.ConnectionString;
             services.AddDbContext<AmadeusContext>(o =>
                 o.UseNpgsql(conn).UseSnakeCaseNamingConvention());
 
