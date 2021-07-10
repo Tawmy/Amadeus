@@ -1,10 +1,8 @@
-using System.IO;
 using System.Reflection;
 using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace Amadeus.Db
 {
@@ -20,21 +18,10 @@ namespace Amadeus.Db
         {
         }
 
-        #region DbSets
-
-        public DbSet<Config> Configs { get; set; }
-        public DbSet<ConfigOption> ConfigOptions { get; set; }
-        public DbSet<ConfigOptionCategory> ConfigOptionCategories { get; set; }
-        public DbSet<Guild> Guilds { get; set; }
-
-        #endregion
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
-            {
                 optionsBuilder.UseNpgsql(Configuration.ConnectionString).UseSnakeCaseNamingConvention();
-            }
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -43,6 +30,15 @@ namespace Amadeus.Db
             mb.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             mb.HasPostgresEnum<CsType>();
         }
+
+        #region DbSets
+
+        public DbSet<Config> Configs { get; set; }
+        public DbSet<ConfigOption> ConfigOptions { get; set; }
+        public DbSet<ConfigOptionCategory> ConfigOptionCategories { get; set; }
+        public DbSet<Guild> Guilds { get; set; }
+
+        #endregion
     }
 
     // Necessary for using EF migrations in Db project

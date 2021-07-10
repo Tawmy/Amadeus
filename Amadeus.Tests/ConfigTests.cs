@@ -12,7 +12,7 @@ namespace Amadeus.Tests
             var prefix = await ConfigHelper.GetString("CommandPrefix");
             Assert.AreEqual(prefix, "!");
         }
-        
+
         [Test]
         public async Task GetCommandPrefixAsChar()
         {

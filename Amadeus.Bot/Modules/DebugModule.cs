@@ -5,14 +5,13 @@ using Discord.WebSocket;
 
 namespace Amadeus.Bot.Modules
 {
-    public class DebugModule: ModuleBase<SocketCommandContext>
+    public class DebugModule : ModuleBase<SocketCommandContext>
     {
         // ~sample square 20 -> 400
         [Command("square")]
         [Summary("Squares a number.")]
         public async Task SquareAsync(
-            [Summary("The number to square.")] 
-            int num)
+            [Summary("The number to square.")] int num)
         {
             // We can also access the channel from the Command Context.
             await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");

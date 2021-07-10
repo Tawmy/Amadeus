@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Amadeus.Db.Helper;
-using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -32,8 +31,7 @@ namespace Amadeus.Bot.Handlers
             //
             // If you do not use Dependency Injection, pass null.
             // See Dependency Injection guide for more information.
-            await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                services: null);
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -57,10 +55,7 @@ namespace Amadeus.Bot.Handlers
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.
-            await _commands.ExecuteAsync(
-                context: context,
-                argPos: argPos,
-                services: null);
+            await _commands.ExecuteAsync(context, argPos, null);
         }
     }
 }
