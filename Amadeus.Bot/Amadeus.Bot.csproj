@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -11,5 +12,13 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
       <PlatformTarget>x64</PlatformTarget>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Discord.Net" Version="2.4.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Amadeus.Db\Amadeus.Db.csproj" />
+    </ItemGroup>
 
 </Project>

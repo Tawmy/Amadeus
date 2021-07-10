@@ -1,5 +1,6 @@
 using System.IO;
 using System.Reflection;
+using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -22,21 +23,23 @@ namespace Amadeus.Db
         protected override void OnModelCreating(ModelBuilder mb)
         {
             mb.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            mb.HasPostgresEnum<CsType>();
         }
     }
-    
+
     // Necessary for using EF migrations in Db project
     // Reference: https://medium.com/oppr/net-core-using-entity-framework-core-in-a-separate-project-e8636f9dc9e5
     // Thank you Mr. Santos
-    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AmadeusContext> 
-    { 
-        public AmadeusContext CreateDbContext(string[] args) 
-        { 
-            IConfigurationRoot configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(@Directory.GetCurrentDirectory() + "/../Amadeus.Web/appsettings.json").Build(); 
-            var builder = new DbContextOptionsBuilder<AmadeusContext>(); 
-            var connectionString = configuration.GetConnectionString("AmadeusDev"); 
-            builder.UseNpgsql(connectionString).UseCamelCaseNamingConvention(); 
-            return new AmadeusContext(builder.Options); 
-        } 
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AmadeusContext>
+    {
+        public AmadeusContext CreateDbContext(string[] args)
+        {
+            var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(Directory.GetCurrentDirectory() + "/../Amadeus.Web/appsettings.json").Build();
+            var builder = new DbContextOptionsBuilder<AmadeusContext>();
+            var connectionString = configuration.GetConnectionString("AmadeusDev");
+            builder.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+            return new AmadeusContext(builder.Options);
+        }
     }
 }
