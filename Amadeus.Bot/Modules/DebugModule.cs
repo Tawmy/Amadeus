@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Amadeus.Db.Helper;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -15,6 +16,15 @@ namespace Amadeus.Bot.Modules
         {
             // We can also access the channel from the Command Context.
             await Context.Channel.SendMessageAsync($"{num}^2 = {Math.Pow(num, 2)}");
+        }
+
+        [Command("prefix")]
+        [Summary("Sets prefix.")]
+        public async Task PrefixAsync(
+            [Summary("The prefix to set.")] char prefix)
+        {
+            await ReplyAsync(await ConfigHelper.Set("CommandPrefix", Context.Guild.Id, prefix) 
+                ? "success" : "failed");
         }
 
         // ~sample userinfo --> foxbot#0282

@@ -1,11 +1,12 @@
+using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Amadeus.Db.Mapping
 {
-    public class Guild : IEntityTypeConfiguration<Models.Guild>
+    public class GuildMapping : IEntityTypeConfiguration<Guild>
     {
-        public void Configure(EntityTypeBuilder<Models.Guild> b)
+        public void Configure(EntityTypeBuilder<Guild> b)
         {
             b.HasKey(x => x.Id);
             b.Property(x => x.Id).ValueGeneratedNever();

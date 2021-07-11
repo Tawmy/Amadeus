@@ -3,6 +3,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Amadeus.Bot.Handlers;
 using Amadeus.Bot.Models;
+using Amadeus.Db;
+using Amadeus.Db.Helper;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
@@ -27,6 +29,9 @@ namespace Amadeus.Bot
                 using (var services = ConfigureServices())
                 {
                     _client = services.GetRequiredService<DiscordSocketClient>();
+
+                    await ConfigHelper.LoadConfigs();
+                    
                     await _client.LoginAsync(TokenType.Bot, cfg.Token);
                     await _client.StartAsync();
 

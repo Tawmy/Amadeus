@@ -1,11 +1,12 @@
+using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Amadeus.Db.Mapping
 {
-    public class Config : IEntityTypeConfiguration<Models.Config>
+    public class ConfigMapping : IEntityTypeConfiguration<Config>
     {
-        public void Configure(EntityTypeBuilder<Models.Config> b)
+        public void Configure(EntityTypeBuilder<Config> b)
         {
             b.HasKey(x => x.Id);
 

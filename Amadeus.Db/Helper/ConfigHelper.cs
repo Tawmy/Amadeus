@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
@@ -8,34 +10,42 @@ namespace Amadeus.Db.Helper
 {
     public static class ConfigHelper
     {
+        public static async Task LoadConfigs()
+        {
+            // load options for default values and getting names
+            Configuration.ConfigOptions = await EntityRepository<AmadeusContext, ConfigOption>.GetAllAsync();
+
+            var configs = await EntityRepository<AmadeusContext, Config>.GetAllAsync();
+            var guilds = configs.Select(x => x.GuildId).Distinct().ToList();
+
+            var dicts = new Dictionary<ulong, List<Config>>();
+            guilds.ForEach(x => dicts.Add(x, configs.Where(y => y.GuildId == x).ToList()));
+            Configuration.GuildConfigs = dicts;
+        }
+
         public static async Task<string> GetString(string option, ulong? guildId = null)
         {
+            var defaultOption = Configuration.ConfigOptions.FirstOrDefault(x => x.Name.Equals(option));
+
             if (guildId != null)
             {
-                var cfgGuild = await EntityRepository<AmadeusContext, Config>.GetSingleAsync(x =>
-                    x.ConfigOption.Name.Equals(option) &&
-                    x.GuildId == guildId);
+                // check if guild in dictionary
+                // if so, get config for that specific option
+                var cfgGuild = Configuration.GuildConfigs.TryGetValue(guildId.Value, out var configs)
+                    ? configs.FirstOrDefault(x => x.ConfigOptionId == defaultOption?.Id)
+                    : null;
 
                 if (cfgGuild != null) return cfgGuild.Value;
 
-                var cfgDefault =
-                    await EntityRepository<AmadeusContext, ConfigOption>.GetSingleAsync(x =>
-                        x.Name.Equals(option));
-
-                if (cfgDefault == null) return null;
-
                 // if no config set, get default value, set for guild, and return
                 // this avoids user confusion if default bot behaviour is ever changed
-                await Set(option, guildId.Value, cfgDefault.DefaultValue);
-                return cfgDefault.DefaultValue;
+                await Set(option, guildId.Value, defaultOption?.DefaultValue);
+                return defaultOption?.DefaultValue;
             }
             else
             {
                 // when no guildId provided, return default value
-                var cfgDefault =
-                    await EntityRepository<AmadeusContext, ConfigOption>.GetSingleAsync(x =>
-                        x.Name.Equals(option));
-                return cfgDefault.DefaultValue;
+                return defaultOption?.DefaultValue;
             }
         }
 
@@ -61,13 +71,12 @@ namespace Amadeus.Db.Helper
 
         public static async Task<bool> Set(string option, ulong guildId, object value)
         {
-            var opt = await EntityRepository<AmadeusContext, ConfigOption>.GetSingleAsync(x =>
-                x.Name.Equals(option));
+            var opt = Configuration.ConfigOptions.FirstOrDefault(x => x.Name.Equals(option));
             if (opt == null) return false;
 
-            string valueStr = default;
-
-            switch (opt.CsType)
+            string valueStr;
+            var test = (CsType) opt.CsType;
+            switch (test)
             {
                 case CsType.Boolean when value is bool b:
                     valueStr = b ? "1" : "0";
@@ -83,18 +92,37 @@ namespace Amadeus.Db.Helper
                     return false;
             }
 
-            var curr = await EntityRepository<AmadeusContext, Config>.GetSingleAsync(x =>
-                x.ConfigOption.Name.Equals(option) &&
-                x.GuildId == guildId);
+            if (Configuration.GuildConfigs.TryGetValue(guildId, out var guildConfigs))
+            {
+                // guild exists in cached configs
 
-            // does not exist, create
-            if (curr == null)
-                return await EntityRepository<AmadeusContext, Config>.CreateAsync(new Config
-                    {GuildId = guildId, ConfigOptionId = opt.Id, Value = valueStr}) != null;
-
-            // exists, modify
-            curr.Value = valueStr;
-            return await EntityRepository<AmadeusContext, Config>.ModifyAsync(x => x.Id == curr.Id, curr) != null;
+                var curr = guildConfigs.FirstOrDefault(x => x.ConfigOptionId == opt.Id);
+                if (curr != null)
+                {
+                    // config exists in cached guild config
+                    // -> edit in cached config and database
+                    curr.Value = valueStr;
+                    return await EntityRepository<AmadeusContext, Config>.ModifyAsync(x =>
+                               x.Id == curr.Id, curr) != null;
+                }
+                else
+                {
+                    // config does not exist in cached guild config
+                    // -> create in cached configs and add to database
+                    var cCfg = new Config {ConfigOptionId = opt.Id, GuildId = guildId, Value = valueStr};
+                    guildConfigs.Add(cCfg);
+                    return await EntityRepository<AmadeusContext, Config>.CreateAsync(cCfg) != null;
+                }
+            }
+            else
+            {
+                // guild does not exist in cached configs
+                // -> create cached config for guild, add option to that and database
+                var cCfg = new Config {ConfigOptionId = opt.Id, GuildId = guildId, Value = valueStr};
+                var cConfigs = new List<Config> {cCfg};
+                Configuration.GuildConfigs.Add(guildId, cConfigs);
+                return await EntityRepository<AmadeusContext, Config>.CreateAsync(cCfg) != null;
+            }
         }
     }
 }

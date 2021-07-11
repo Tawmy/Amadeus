@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Amadeus.Db.Migrations
 {
     [DbContext(typeof(AmadeusContext))]
-    [Migration("20210710202247_Initial")]
+    [Migration("20210711072650_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

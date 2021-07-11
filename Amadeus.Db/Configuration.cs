@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Amadeus.Db.Models;
+
 namespace Amadeus.Db
 {
     public static class Configuration
@@ -13,5 +16,8 @@ namespace Amadeus.Db
 #endif
             }
         }
+
+        public static Dictionary<ulong, List<Config>> GuildConfigs { get; set; }
+        public static List<ConfigOption> ConfigOptions { get; set; }
     }
 }
