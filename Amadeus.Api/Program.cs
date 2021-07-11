@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Amadeus.Web
+namespace Amadeus.Api
 {
     public class Program
     {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Amadeus.Db;
 using Amadeus.Db.Models;
 
-namespace Amadeus.Web.Controllers
+namespace Amadeus.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
