@@ -1,54 +1,48 @@
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Amadeus.Bot.Handlers;
+using Amadeus.Bot.Helpers;
 using Amadeus.Bot.Models;
-using Amadeus.Db;
 using Amadeus.Db.Helper;
-using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
-using Microsoft.Extensions.DependencyInjection;
+using DSharpPlus;
 
 namespace Amadeus.Bot
 {
     public class Program
     {
-        private DiscordSocketClient _client;
+        private DiscordClient _amadeus;
+        private AmadeusConfig _cfg;
 
         public static void Main(string[] args)
         {
             new Program().MainAsync().GetAwaiter().GetResult();
         }
 
-        public async Task MainAsync()
+        private async Task MainAsync()
         {
-            var cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"));
+            _cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"));
 
-            if (cfg != null)
-                using (var services = ConfigureServices())
-                {
-                    _client = services.GetRequiredService<DiscordSocketClient>();
+            if (_cfg != null)
+            {
+                await ConfigHelper.LoadConfigs();
+                _amadeus = InitAmadeus();
+                await _amadeus.ConnectAsync();
+                var hlp = new StartupHelper(_amadeus, _cfg);
+                await hlp.SendStartupMessage();
 
-                    await ConfigHelper.LoadConfigs();
-                    
-                    await _client.LoginAsync(TokenType.Bot, cfg.Token);
-                    await _client.StartAsync();
-
-                    await services.GetRequiredService<CommandHandler>().InstallCommandsAsync();
-
-                    // Block this task until the program is closed.
-                    await Task.Delay(-1);
-                }
+                // Block this task until the program is closed.
+                await Task.Delay(-1);
+            }
         }
 
-        private ServiceProvider ConfigureServices()
+        private DiscordClient InitAmadeus()
         {
-            return new ServiceCollection()
-                .AddSingleton<DiscordSocketClient>()
-                .AddSingleton<CommandService>()
-                .AddSingleton<CommandHandler>()
-                .BuildServiceProvider();
+            return new(new DiscordConfiguration
+            {
+                Token = _cfg.Token,
+                TokenType = TokenType.Bot,
+                Intents = DiscordIntents.All
+            });
         }
     }
 }

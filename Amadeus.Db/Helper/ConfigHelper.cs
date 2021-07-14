@@ -42,11 +42,9 @@ namespace Amadeus.Db.Helper
                 await Set(option, guildId.Value, defaultOption?.DefaultValue);
                 return defaultOption?.DefaultValue;
             }
-            else
-            {
-                // when no guildId provided, return default value
-                return defaultOption?.DefaultValue;
-            }
+
+            // when no guildId provided, return default value
+            return defaultOption?.DefaultValue;
         }
 
         public static async Task<char> GetChar(string option, ulong? guildId = null)
@@ -75,8 +73,7 @@ namespace Amadeus.Db.Helper
             if (opt == null) return false;
 
             string valueStr;
-            var test = (CsType) opt.CsType;
-            switch (test)
+            switch (opt.CsType)
             {
                 case CsType.Boolean when value is bool b:
                     valueStr = b ? "1" : "0";
@@ -103,18 +100,16 @@ namespace Amadeus.Db.Helper
                     // -> edit in cached config and database
                     curr.Value = valueStr;
                     return await EntityRepository<AmadeusContext, Config>.ModifyAsync(x =>
-                               x.Id == curr.Id, curr) != null;
+                        x.Id == curr.Id, curr) != null;
                 }
-                else
-                {
-                    // config does not exist in cached guild config
-                    // -> create in cached configs and add to database
-                    var cCfg = new Config {ConfigOptionId = opt.Id, GuildId = guildId, Value = valueStr};
-                    guildConfigs.Add(cCfg);
-                    return await EntityRepository<AmadeusContext, Config>.CreateAsync(cCfg) != null;
-                }
+
+                // config does not exist in cached guild config
+                // -> create in cached configs and add to database
+                var cCfg = new Config {ConfigOptionId = opt.Id, GuildId = guildId, Value = valueStr};
+                guildConfigs.Add(cCfg);
+                return await EntityRepository<AmadeusContext, Config>.CreateAsync(cCfg) != null;
             }
-            else
+
             {
                 // guild does not exist in cached configs
                 // -> create cached config for guild, add option to that and database

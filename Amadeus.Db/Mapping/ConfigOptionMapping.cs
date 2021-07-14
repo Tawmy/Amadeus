@@ -1,5 +1,3 @@
-using System;
-using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

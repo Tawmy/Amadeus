@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Amadeus.Db;
 using Amadeus.Db.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Amadeus.Api.Controllers
 {
@@ -32,10 +32,7 @@ namespace Amadeus.Api.Controllers
         {
             var config = await _context.Configs.FindAsync(id);
 
-            if (config == null)
-            {
-                return NotFound();
-            }
+            if (config == null) return NotFound();
 
             return config;
         }
@@ -45,10 +42,7 @@ namespace Amadeus.Api.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> PutConfig(int id, Config config)
         {
-            if (id != config.Id)
-            {
-                return BadRequest();
-            }
+            if (id != config.Id) return BadRequest();
 
             _context.Entry(config).State = EntityState.Modified;
 
@@ -59,13 +53,8 @@ namespace Amadeus.Api.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ConfigExists(id))
-                {
                     return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -79,7 +68,7 @@ namespace Amadeus.Api.Controllers
             _context.Configs.Add(config);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetConfig", new { id = config.Id }, config);
+            return CreatedAtAction("GetConfig", new {id = config.Id}, config);
         }
 
         // DELETE: api/Config/5
@@ -87,10 +76,7 @@ namespace Amadeus.Api.Controllers
         public async Task<IActionResult> DeleteConfig(int id)
         {
             var config = await _context.Configs.FindAsync(id);
-            if (config == null)
-            {
-                return NotFound();
-            }
+            if (config == null) return NotFound();
 
             _context.Configs.Remove(config);
             await _context.SaveChangesAsync();

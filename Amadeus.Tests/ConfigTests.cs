@@ -13,7 +13,7 @@ namespace Amadeus.Tests
             await ConfigHelper.LoadConfigs();
             Assert.NotNull(Configuration.GuildConfigs);
         }
-        
+
         [Test]
         public async Task GetCommandPrefixAsString()
         {
@@ -21,7 +21,7 @@ namespace Amadeus.Tests
             var prefix = await ConfigHelper.GetString("CommandPrefix");
             Assert.AreEqual(prefix, "!");
         }
-        
+
         [Test]
         public async Task GetCommandPrefixAsStringForGuild()
         {
