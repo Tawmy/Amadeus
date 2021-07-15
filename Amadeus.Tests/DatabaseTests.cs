@@ -8,11 +8,6 @@ namespace Amadeus.Tests
 {
     public class DatabaseTests
     {
-        [Test]
-        public async Task TestConfigOptions()
-        {
-            var allAsync = await EntityRepository<AmadeusContext, ConfigOption>.GetAllAsync();
-            var all = EntityRepository<AmadeusContext, ConfigOption>.GetAll();
-        }
+        // TODO
     }
 }

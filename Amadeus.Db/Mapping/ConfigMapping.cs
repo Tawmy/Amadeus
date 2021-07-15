@@ -10,11 +10,6 @@ namespace Amadeus.Db.Mapping
         {
             b.HasKey(x => x.Id);
 
-            b.HasOne(x => x.ConfigOption)
-                .WithMany(y => y.Configs)
-                .HasForeignKey(x => x.ConfigOptionId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             b.HasOne(x => x.Guild)
                 .WithMany(y => y.Configs)
                 .HasForeignKey(x => x.GuildId)

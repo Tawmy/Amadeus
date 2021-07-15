@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
+using Amadeus.Db.Statics;
 using logm.EntityRepository.Core;
 
 namespace Amadeus.Db.Helper
@@ -13,7 +14,6 @@ namespace Amadeus.Db.Helper
         public static async Task LoadConfigs()
         {
             // load options for default values and getting names
-            Configuration.ConfigOptions = await EntityRepository<AmadeusContext, ConfigOption>.GetAllAsync();
 
             var configs = await EntityRepository<AmadeusContext, Config>.GetAllAsync();
             var guilds = configs.Select(x => x.GuildId).Distinct().ToList();
@@ -25,26 +25,23 @@ namespace Amadeus.Db.Helper
 
         public static async Task<string> GetString(string option, ulong? guildId = null)
         {
-            var defaultOption = Configuration.ConfigOptions.FirstOrDefault(x => x.Name.Equals(option));
-
-            if (guildId != null)
-            {
-                // check if guild in dictionary
-                // if so, get config for that specific option
-                var cfgGuild = Configuration.GuildConfigs.TryGetValue(guildId.Value, out var configs)
-                    ? configs.FirstOrDefault(x => x.ConfigOptionId == defaultOption?.Id)
-                    : null;
-
-                if (cfgGuild != null) return cfgGuild.Value;
-
-                // if no config set, get default value, set for guild, and return
-                // this avoids user confusion if default bot behaviour is ever changed
-                await Set(option, guildId.Value, defaultOption?.DefaultValue);
-                return defaultOption?.DefaultValue;
-            }
-
+            var defaultOption = ConfigOptions.Get(option);
+            
             // when no guildId provided, return default value
-            return defaultOption?.DefaultValue;
+            if (guildId == null) return defaultOption?.DefaultValue;
+            
+            // check if guild in dictionary
+            // if so, get config for that specific option
+            var cfgGuild = Configuration.GuildConfigs.TryGetValue(guildId.Value, out var configs)
+                ? configs.FirstOrDefault(x => x.ConfigOptionId == defaultOption.Id)
+                : null;
+
+            if (cfgGuild != null) return cfgGuild.Value;
+
+            // if no config set, get default value, set for guild, and return
+            // this avoids user confusion if default bot behaviour is ever changed
+            await Set(option, guildId.Value, defaultOption.DefaultValue);
+            return defaultOption.DefaultValue;
         }
 
         public static async Task<char> GetChar(string option, ulong? guildId = null)
@@ -69,8 +66,7 @@ namespace Amadeus.Db.Helper
 
         public static async Task<bool> Set(string option, ulong guildId, object value)
         {
-            var opt = Configuration.ConfigOptions.FirstOrDefault(x => x.Name.Equals(option));
-            if (opt == null) return false;
+            var opt = ConfigOptions.Get(option);
 
             string valueStr;
             switch (opt.CsType)

@@ -18,6 +18,5 @@ namespace Amadeus.Db
         }
 
         public static Dictionary<ulong, List<Config>> GuildConfigs { get; set; }
-        public static List<ConfigOption> ConfigOptions { get; set; }
     }
 }
