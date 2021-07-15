@@ -44,24 +44,44 @@ namespace Amadeus.Db.Helper
             return defaultOption.DefaultValue;
         }
 
-        public static async Task<char> GetChar(string option, ulong? guildId = null)
+        public static async Task<char> GetChar(string option, ulong guildId)
         {
             return (await GetString(option, guildId))[0];
         }
+        
+        public static async Task<char> GetChar(string option)
+        {
+            return (await GetString(option, null))[0];
+        }
 
-        public static async Task<int> GetInt(string option, ulong? guildId = null)
+        public static async Task<int> GetInt(string option, ulong guildId)
         {
             return Convert.ToInt32(await GetString(option, guildId));
         }
+        
+        public static async Task<int> GetInt(string option)
+        {
+            return Convert.ToInt32(await GetString(option, null));
+        }
 
-        public static async Task<bool> GetBool(string option, ulong? guildId = null)
+        public static async Task<bool> GetBool(string option, ulong guildId)
         {
             return (await GetString(option, guildId)).Equals("1");
         }
+        
+        public static async Task<bool> GetBool(string option)
+        {
+            return (await GetString(option, null)).Equals("1");
+        }
 
-        public static async Task<ulong> GetUlong(string option, ulong? guildId = null)
+        public static async Task<ulong> GetUlong(string option, ulong guildId)
         {
             return Convert.ToUInt64(await GetString(option, guildId));
+        }
+        
+        public static async Task<ulong> GetUlong(string option)
+        {
+            return Convert.ToUInt64(await GetString(option, null));
         }
 
         public static async Task<bool> Set(string option, ulong guildId, object value)

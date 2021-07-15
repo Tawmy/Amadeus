@@ -23,7 +23,9 @@ namespace Amadeus.Bot.Helpers
 
             if (channel == null)
             {
+#if DEBUG
                 Console.Write("Main channel not found. Exiting.");
+#endif
                 Environment.Exit(0);
             }
 
