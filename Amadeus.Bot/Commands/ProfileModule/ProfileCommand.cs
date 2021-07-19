@@ -21,14 +21,14 @@ namespace Amadeus.Bot.Commands.ProfileModule
             var userEntries =
                 await EntityRepository<AmadeusContext, ProfileEntry>.GetAllAsync(x =>
                     x.UserId == (member != null ? member.Id : ctx.User.Id));
-            
+
 
             var embed = new DiscordEmbedBuilder
             {
                 Title = member != null ? member.Nickname ?? member.Username :
                     ctx.Member != null ? ctx.Member.Nickname ?? ctx.Member.Username : ctx.User.Username
             };
-            
+
             if (userEntries.Count == 0)
             {
                 const string command = "TODO";
@@ -36,9 +36,9 @@ namespace Amadeus.Bot.Commands.ProfileModule
                     ? $"{embed.Title} does not have a profile. Tell them to create one using {command}!"
                     : $"You do not have a profile. Create one using {command}!";
             }
-            
-            var fields = ProfileFields.Get(userEntries.Select(x => x.ProfileFieldId));
-            var categories = ProfileFieldCategories.Get(fields.Select(x => x.ProfileFieldCategoryId));
+
+            var fields = new ProfileFields().Get(userEntries.Select(x => x.ProfileFieldId));
+            var categories = new ProfileFieldCategories().Get(fields.Select(x => x.ProfileFieldCategoryId));
 
             foreach (var category in categories)
             {

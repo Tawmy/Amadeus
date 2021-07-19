@@ -1,48 +1,24 @@
 using System.Collections.Generic;
-using System.Linq;
+using Amadeus.Db.BaseClasses;
 
 namespace Amadeus.Db.Statics
 {
-    public class ConfigOptionCategories
+    public class ConfigOptionCategories : DbClass<ConfigOptionCategory>
     {
-        private static readonly List<ConfigOptionCategory> List;
-
-        static ConfigOptionCategories()
+        public ConfigOptionCategories() : base(new List<ConfigOptionCategory>
         {
-            List = new List<ConfigOptionCategory>
-            {
-                new(1, 1, "General", "todo")
-            };
-        }
-
-        public static ConfigOptionCategory Get(int id)
+            new(1, 1, "General", "todo")
+        })
         {
-            return List.First(x => x.Id == id);
-        }
-
-        public static ConfigOptionCategory Get(string name)
-        {
-            return List.First(x => x.Name.Equals(name));
-        }
-
-        public static List<ConfigOptionCategory> Get(IEnumerable<int> ids)
-        {
-            return List.Where(x => ids.Contains(x.Id)).OrderBy(x => x.SortId).ToList();
         }
     }
 
-    public class ConfigOptionCategory
+    public class ConfigOptionCategory : DbField
     {
-        public readonly int Id;
-        public readonly int SortId;
-        public readonly string Name;
         public readonly string Description;
 
-        public ConfigOptionCategory(int i, int s, string n, string d)
+        public ConfigOptionCategory(int i, int s, string n, string d) : base(i, s, n)
         {
-            Id = i;
-            SortId = s;
-            Name = n;
             Description = d;
         }
     }

@@ -25,7 +25,7 @@ namespace Amadeus.Db.Helper
 
         public static async Task<string> GetString(string option, ulong? guildId = null)
         {
-            var defaultOption = ConfigOptions.Get(option);
+            var defaultOption = new ConfigOptions().Get(option);
 
             // when no guildId provided, return default value
             if (guildId == null) return defaultOption?.DefaultValue;
@@ -86,7 +86,7 @@ namespace Amadeus.Db.Helper
 
         public static async Task<bool> Set(string option, ulong guildId, object value)
         {
-            var opt = ConfigOptions.Get(option);
+            var opt = new ConfigOptions().Get(option);
 
             string valueStr;
             switch (opt.CsType)

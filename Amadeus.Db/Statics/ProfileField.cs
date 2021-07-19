@@ -1,51 +1,27 @@
 using System.Collections.Generic;
-using System.Linq;
+using Amadeus.Db.BaseClasses;
 
 namespace Amadeus.Db.Statics
 {
-    public static class ProfileFields
+    public class ProfileFields : DbClass<ProfileField>
     {
-        private static readonly List<ProfileField> List;
-
-        static ProfileFields()
+        public ProfileFields() : base(new List<ProfileField>
         {
-            List = new List<ProfileField>
-            {
-                new(1, 1, "Twitter", true, 1),
-                new(2, 1, "Steam", true, 2)
-            };
-        }
-
-        public static ProfileField Get(int id)
+            new(1, 1, "Twitter", true, 1),
+            new(2, 1, "Steam", true, 2)
+        })
         {
-            return List.First(x => x.Id == id);
-        }
-
-        public static ProfileField Get(string name)
-        {
-            return List.First(x => x.Name.Equals(name));
-        }
-
-        public static List<ProfileField> Get(IEnumerable<int> ids)
-        {
-            return List.Where(x => ids.Contains(x.Id)).OrderBy(x => x.SortId).ToList();
         }
     }
 
-    public class ProfileField
+    public class ProfileField : DbField
     {
-        public readonly int Id;
-        public readonly int SortId;
-        public readonly string Name;
         public readonly bool HasUrl;
 
         public readonly int ProfileFieldCategoryId;
 
-        public ProfileField(int i, int s, string n, bool u, int ci)
+        public ProfileField(int i, int s, string n, bool u, int ci) : base(i, s, n)
         {
-            Id = i;
-            SortId = s;
-            Name = n;
             HasUrl = u;
             ProfileFieldCategoryId = ci;
         }
