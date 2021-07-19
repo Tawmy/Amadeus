@@ -26,14 +26,20 @@ namespace Amadeus.Bot.Modules
                 Title = ctx.Member != null ? ctx.Member.Nickname ?? ctx.Member.Username : ctx.User.Username
             };
 
-            foreach (var catFields in categories.Select(x => userEntries.Where(y =>
-                fields.First(z => z.Id == y.ProfileFieldId).ProfileFieldCategoryId == x.Id)))
-            foreach (var entry in catFields)
+            foreach (var category in categories)
             {
-                entry.ProfileField = fields.First(x => x.Id == entry.ProfileFieldId);
+                embed.AddField("\u200b", $"***__{category.Name}__***");
 
-                var hasUrl = entry.ProfileField.HasUrl && !string.IsNullOrWhiteSpace(entry.Url);
-                embed.AddField(entry.ProfileField.Name, hasUrl ? $"[{entry.Value}]({entry.Url})" : entry.Value, true);
+                foreach (var entry in userEntries.Where(x =>
+                    fields.First(y => y.Id == x.ProfileFieldId).ProfileFieldCategoryId == category.Id))
+                {
+                    entry.ProfileField = fields.First(x => x.Id == entry.ProfileFieldId);
+
+                    var hasUrl = entry.ProfileField.HasUrl && !string.IsNullOrWhiteSpace(entry.Url);
+                    embed.AddField(entry.ProfileField.Name,
+                        hasUrl ? $"[{entry.Value}]({entry.Url})" : entry.Value,
+                        true);
+                }
             }
 
             await ctx.RespondAsync(embed.Build());
