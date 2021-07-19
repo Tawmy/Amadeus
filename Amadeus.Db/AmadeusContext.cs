@@ -30,11 +30,13 @@ namespace Amadeus.Db
             mb.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             mb.HasPostgresEnum<CsType>();
         }
-        
+
         #region DbSets
 
         public DbSet<Config> Configs { get; set; }
         public DbSet<Guild> Guilds { get; set; }
+        public DbSet<ProfileEntry> ProfileEntries { get; set; }
+        public DbSet<User> Users { get; set; }
 
         #endregion
     }

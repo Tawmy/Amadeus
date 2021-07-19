@@ -4,7 +4,7 @@ namespace Amadeus.Db.Models
     {
         public int Id { get; set; }
 
-        public int ConfigOptionId { get; set; }
+        public int ConfigOptionId { get; set; } // statics
 
         public ulong GuildId { get; set; }
         public Guild Guild { get; set; }

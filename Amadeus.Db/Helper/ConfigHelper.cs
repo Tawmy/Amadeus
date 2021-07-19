@@ -26,10 +26,10 @@ namespace Amadeus.Db.Helper
         public static async Task<string> GetString(string option, ulong? guildId = null)
         {
             var defaultOption = ConfigOptions.Get(option);
-            
+
             // when no guildId provided, return default value
             if (guildId == null) return defaultOption?.DefaultValue;
-            
+
             // check if guild in dictionary
             // if so, get config for that specific option
             var cfgGuild = Configuration.GuildConfigs.TryGetValue(guildId.Value, out var configs)
@@ -48,40 +48,40 @@ namespace Amadeus.Db.Helper
         {
             return (await GetString(option, guildId))[0];
         }
-        
+
         public static async Task<char> GetChar(string option)
         {
-            return (await GetString(option, null))[0];
+            return (await GetString(option))[0];
         }
 
         public static async Task<int> GetInt(string option, ulong guildId)
         {
             return Convert.ToInt32(await GetString(option, guildId));
         }
-        
+
         public static async Task<int> GetInt(string option)
         {
-            return Convert.ToInt32(await GetString(option, null));
+            return Convert.ToInt32(await GetString(option));
         }
 
         public static async Task<bool> GetBool(string option, ulong guildId)
         {
             return (await GetString(option, guildId)).Equals("1");
         }
-        
+
         public static async Task<bool> GetBool(string option)
         {
-            return (await GetString(option, null)).Equals("1");
+            return (await GetString(option)).Equals("1");
         }
 
         public static async Task<ulong> GetUlong(string option, ulong guildId)
         {
             return Convert.ToUInt64(await GetString(option, guildId));
         }
-        
+
         public static async Task<ulong> GetUlong(string option)
         {
-            return Convert.ToUInt64(await GetString(option, null));
+            return Convert.ToUInt64(await GetString(option));
         }
 
         public static async Task<bool> Set(string option, ulong guildId, object value)

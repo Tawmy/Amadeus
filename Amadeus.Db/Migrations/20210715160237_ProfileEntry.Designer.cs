@@ -2,15 +2,17 @@
 using Amadeus.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Amadeus.Db.Migrations
 {
     [DbContext(typeof(AmadeusContext))]
-    partial class AmadeusContextModelSnapshot : ModelSnapshot
+    [Migration("20210715160237_ProfileEntry")]
+    partial class ProfileEntry
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

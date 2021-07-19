@@ -3,42 +3,43 @@ using System.Linq;
 
 namespace Amadeus.Db.Statics
 {
-    public class ConfigOptionCategories
+    public static class ProfileFieldCategories
     {
-        private static readonly List<ConfigOptionCategory> List;
+        private static readonly List<ProfileFieldCategory> List;
 
-        static ConfigOptionCategories()
+        static ProfileFieldCategories()
         {
-            List = new List<ConfigOptionCategory>
+            List = new List<ProfileFieldCategory>
             {
-                new(1, 1, "General", "todo")
+                new(1, 1, "Social", "todo"),
+                new(2, 2, "Gaming", "todo")
             };
         }
 
-        public static ConfigOptionCategory Get(int id)
+        public static ProfileFieldCategory Get(int id)
         {
             return List.First(x => x.Id == id);
         }
 
-        public static ConfigOptionCategory Get(string name)
+        public static ProfileFieldCategory Get(string name)
         {
             return List.First(x => x.Name.Equals(name));
         }
 
-        public static List<ConfigOptionCategory> Get(IEnumerable<int> ids)
+        public static List<ProfileFieldCategory> Get(IEnumerable<int> ids)
         {
             return List.Where(x => ids.Contains(x.Id)).OrderBy(x => x.SortId).ToList();
         }
     }
 
-    public class ConfigOptionCategory
+    public class ProfileFieldCategory
     {
         public readonly int Id;
         public readonly int SortId;
         public readonly string Name;
         public readonly string Description;
 
-        public ConfigOptionCategory(int i, int s, string n, string d)
+        public ProfileFieldCategory(int i, int s, string n, string d)
         {
             Id = i;
             SortId = s;
