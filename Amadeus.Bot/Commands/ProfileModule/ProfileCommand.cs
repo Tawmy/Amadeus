@@ -13,15 +13,22 @@ namespace Amadeus.Bot.Commands.ProfileModule
     {
         public static async Task Run(CommandContext ctx)
         {
+            await Run(ctx, null);
+        }
+
+        public static async Task Run(CommandContext ctx, DiscordMember member)
+        {
             var userEntries =
-                await EntityRepository<AmadeusContext, ProfileEntry>.GetAllAsync(x => x.UserId == ctx.User.Id);
+                await EntityRepository<AmadeusContext, ProfileEntry>.GetAllAsync(x =>
+                    x.UserId == (member != null ? member.Id : ctx.User.Id));
 
             var fields = ProfileFields.Get(userEntries.Select(x => x.ProfileFieldId));
             var categories = ProfileFieldCategories.Get(fields.Select(x => x.ProfileFieldCategoryId));
 
             var embed = new DiscordEmbedBuilder
             {
-                Title = ctx.Member != null ? ctx.Member.Nickname ?? ctx.Member.Username : ctx.User.Username
+                Title = member != null ? member.Nickname ?? member.Username :
+                    ctx.Member != null ? ctx.Member.Nickname ?? ctx.Member.Username : ctx.User.Username
             };
 
             foreach (var category in categories)

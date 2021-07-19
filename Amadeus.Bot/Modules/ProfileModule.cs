@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 
 namespace Amadeus.Bot.Modules
 {
@@ -10,6 +11,12 @@ namespace Amadeus.Bot.Modules
         public async Task ProfileCommand(CommandContext ctx)
         {
             await Commands.ProfileModule.ProfileCommand.Run(ctx);
+        }
+
+        [Command("profile")]
+        public async Task ProfileCommand(CommandContext ctx, DiscordMember member)
+        {
+            await Commands.ProfileModule.ProfileCommand.Run(ctx, member);
         }
     }
 }
