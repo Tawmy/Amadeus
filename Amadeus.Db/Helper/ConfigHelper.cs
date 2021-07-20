@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
 using Amadeus.Db.Statics;
+using DSharpPlus.Entities;
 using logm.EntityRepository.Core;
+using Type = Amadeus.Db.Enums.Type;
 
 namespace Amadeus.Db.Helper
 {
@@ -84,22 +85,38 @@ namespace Amadeus.Db.Helper
             return Convert.ToUInt64(await GetString(option));
         }
 
+        public static async Task<DiscordRole> GetRole(string option, DiscordGuild guild)
+        {
+            var roleId = Convert.ToUInt64(await GetString(option, guild.Id));
+            return guild.Roles.TryGetValue(roleId, out var result) ? result : null;
+        }
+
+        public static async Task<DiscordChannel> GetChannel(string option, DiscordGuild guild)
+        {
+            var roleId = Convert.ToUInt64(await GetString(option, guild.Id));
+            return guild.Channels.TryGetValue(roleId, out var result) ? result : null;
+        }
+
         public static async Task<bool> Set(string option, ulong guildId, object value)
         {
             var opt = new ConfigOptions().Get(option);
 
             string valueStr;
-            switch (opt.CsType)
+            switch (opt.Type)
             {
-                case CsType.Boolean when value is bool b:
+                case Type.Boolean when value is bool b:
                     valueStr = b ? "1" : "0";
                     break;
-                case CsType.Int when value is int:
-                case CsType.Char when value is char:
+                case Type.Int when value is int:
+                case Type.Char when value is char:
                     valueStr = value.ToString();
                     break;
-                case CsType.String when value is string s:
+                case Type.String when value is string s:
                     valueStr = s;
+                    break;
+                case Type.Role when value is ulong:
+                case Type.Channel when value is ulong:
+                    valueStr = value.ToString();
                     break;
                 default:
                     return false;

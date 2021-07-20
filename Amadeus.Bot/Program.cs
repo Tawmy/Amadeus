@@ -56,8 +56,8 @@ namespace Amadeus.Bot
 
         private void AddInteractivity()
         {
-            _amadeus.UseInteractivity(new InteractivityConfiguration() 
-            { 
+            _amadeus.UseInteractivity(new InteractivityConfiguration
+            {
                 PollBehaviour = PollBehaviour.DeleteEmojis,
                 Timeout = TimeSpan.FromSeconds(30)
             });

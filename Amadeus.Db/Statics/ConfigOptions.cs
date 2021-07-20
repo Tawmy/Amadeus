@@ -8,7 +8,8 @@ namespace Amadeus.Db.Statics
     {
         public ConfigOptions() : base(new List<ConfigOption>
         {
-            new(1, 1, "CommandPrefix", "todo", CsType.String, "!", 1)
+            new(1, 1, "CommandPrefix", "todo", Type.String, "!", 1),
+            new(2, 1, "Verification Role", "todo", Type.Role, null, 1)
         })
         {
         }
@@ -17,14 +18,14 @@ namespace Amadeus.Db.Statics
     public class ConfigOption : DbField
     {
         public readonly int ConfigOptionCategoryId;
-        public readonly CsType CsType;
         public readonly string DefaultValue;
         public readonly string Description;
+        public readonly Type Type;
 
-        public ConfigOption(int i, int s, string n, string d, CsType t, string df, int ci) : base(i, s, n)
+        public ConfigOption(int i, int s, string n, string d, Type t, string df, int ci) : base(i, s, n)
         {
             Description = d;
-            CsType = t;
+            Type = t;
             DefaultValue = df;
             ConfigOptionCategoryId = ci;
         }

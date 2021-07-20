@@ -28,7 +28,7 @@ namespace Amadeus.Db
         protected override void OnModelCreating(ModelBuilder mb)
         {
             mb.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            mb.HasPostgresEnum<CsType>();
+            mb.HasPostgresEnum<Type>();
         }
 
         #region DbSets

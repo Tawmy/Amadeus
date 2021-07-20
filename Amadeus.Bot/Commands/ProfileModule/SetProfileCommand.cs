@@ -21,7 +21,7 @@ namespace Amadeus.Bot.Commands.ProfileModule
         {
             var pages = new List<Page>();
             var profileFields = new ProfileFields().Get();
-            
+
             foreach (var cat in new ProfileFieldCategories().Get())
             {
                 var page = new Page();
@@ -34,10 +34,7 @@ namespace Amadeus.Bot.Commands.ProfileModule
                 var cProfileFields = profileFields.Where(x =>
                         x.ProfileFieldCategoryId == cat.Id)
                     .ToList();
-                foreach (var cProfileField in cProfileFields)
-                {
-                    embed.AddField(cProfileField.Name, "\u200b", true);
-                }
+                foreach (var cProfileField in cProfileFields) embed.AddField(cProfileField.Name, "\u200b", true);
 
                 page.Embed = embed.Build();
                 pages.Add(page);

@@ -18,7 +18,7 @@ namespace Amadeus.Bot.Modules
         {
             await Commands.ProfileModule.ProfileCommand.Run(ctx, member);
         }
-        
+
         [Command("setprofile")]
         public async Task SetProfileCommand(CommandContext ctx)
         {
