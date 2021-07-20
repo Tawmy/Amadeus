@@ -8,7 +8,8 @@ namespace Amadeus.Db.Statics
         public ConfigOptionCategories() : base(new List<ConfigOptionCategory>
         {
             new(1, 1, "General", "todo"),
-            new(2, 1, "Roles", "todo")
+            new(2, 2, "Roles", "todo"),
+            new(2, 3, "Channels", "todo")
         })
         {
         }

@@ -9,7 +9,8 @@ namespace Amadeus.Db.Statics
         public ConfigOptions() : base(new List<ConfigOption>
         {
             new(1, 1, "CommandPrefix", "todo", Type.String, "!", 1),
-            new(2, 1, "Verification Role", "todo", Type.Role, null, 1)
+            new(2, 1, "Verification Role", "todo", Type.Role, null, 2),
+            new(3, 1, "Mod Channel", "todo", Type.Channel, null, 3)
         })
         {
         }
