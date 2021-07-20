@@ -8,19 +8,19 @@ using Humanizer;
 
 namespace Amadeus.Bot.Events
 {
-    public static class OnGuildMemberAdded
+    public class OnGuildMemberRemoved
     {
-        public static async Task AmadeusOnGuildMemberAdded(DiscordClient sender, GuildMemberAddEventArgs e)
+        public static async Task AmadeusOnGuildMemberRemoved(DiscordClient sender, GuildMemberRemoveEventArgs e)
         {
             var channel = await ConfigHelper.GetChannel("Mod Channel", e.Guild);
             if (channel == null) return;
 
             var embed = new DiscordEmbedBuilder();
-            embed.WithTitle("User joined");
-            embed.WithColor(DiscordColor.CornflowerBlue);
+            embed.WithTitle("User left");
+            embed.WithColor(DiscordColor.IndianRed);
             embed.WithDescription(
-                $"{e.Member.Mention}{Environment.NewLine}{e.Member.Username}#{e.Member.Discriminator}");
-            embed.WithFooter($"Created {e.Member.CreationTimestamp.Humanize()}");
+                $"`{e.Member.Id}`{Environment.NewLine}{e.Member.Username}#{e.Member.Discriminator}");
+            embed.WithFooter($"Joined {e.Member.JoinedAt.Humanize()}");
             embed.WithThumbnail(e.Member.AvatarUrl);
             await channel.SendMessageAsync(embed.Build());
         }

@@ -77,6 +77,7 @@ namespace Amadeus.Bot
         private void RegisterEvents()
         {
             _amadeus.GuildMemberAdded += OnGuildMemberAdded.AmadeusOnGuildMemberAdded;
+            _amadeus.GuildMemberRemoved += OnGuildMemberRemoved.AmadeusOnGuildMemberRemoved;
         }
 
         private async Task<int> ResolvePrefixAsync(DiscordMessage msg)
