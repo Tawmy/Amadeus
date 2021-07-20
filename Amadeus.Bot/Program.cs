@@ -78,6 +78,8 @@ namespace Amadeus.Bot
         {
             _amadeus.GuildMemberAdded += OnGuildMemberAdded.AmadeusOnGuildMemberAdded;
             _amadeus.GuildMemberRemoved += OnGuildMemberRemoved.AmadeusOnGuildMemberRemoved;
+
+            _amadeus.MessageDeleted += OnMessageDeleted.AmadeusOnMessageDeleted;
         }
 
         private async Task<int> ResolvePrefixAsync(DiscordMessage msg)
