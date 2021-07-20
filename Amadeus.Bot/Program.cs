@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
@@ -8,6 +9,9 @@ using Amadeus.Db.Helper;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Enums;
+using DSharpPlus.Interactivity.Extensions;
 
 namespace Amadeus.Bot
 {
@@ -29,6 +33,7 @@ namespace Amadeus.Bot
             {
                 await ConfigHelper.LoadConfigs();
                 _amadeus = InitAmadeus();
+                AddInteractivity();
 
                 await _amadeus.ConnectAsync();
                 var hlp = new StartupHelper(_amadeus, _cfg);
@@ -46,6 +51,15 @@ namespace Amadeus.Bot
                 Token = _cfg.Token,
                 TokenType = TokenType.Bot,
                 Intents = DiscordIntents.All
+            });
+        }
+
+        private void AddInteractivity()
+        {
+            _amadeus.UseInteractivity(new InteractivityConfiguration() 
+            { 
+                PollBehaviour = PollBehaviour.DeleteEmojis,
+                Timeout = TimeSpan.FromSeconds(30)
             });
         }
 
