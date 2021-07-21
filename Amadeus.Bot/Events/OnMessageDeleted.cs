@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Amadeus.Bot.Helpers;
 using Amadeus.Db.Helper;
@@ -23,45 +19,59 @@ namespace Amadeus.Bot.Events
             var channel = await ConfigHelper.GetChannel("Log Channel", e.Guild);
             if (channel == null) return;
 
-            var embed = new DiscordEmbedBuilder();
+            var em = new DiscordEmbedBuilder();
 
+            AddTitle(em, e);
+            AddChannel(em, e);
+            AddMsgAuthor(em, e);
+            AddContent(em, e);
+            AddEmbed(em, e);
+            AddFooter(em, e);
+
+            await channel.SendMessageAsync(em.Build());
+        }
+
+        private static void AddTitle(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
             var titleSuffix = e.Message.Author == null ? " (not cached)" : string.Empty;
-            embed.WithTitle($"Message deleted{titleSuffix}");
+            em.WithTitle($"Message deleted{titleSuffix}");
+        }
 
-            embed.AddField("Channel", e.Message.Channel.Mention, true);
+        private static void AddChannel(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
+            em.AddField("Channel", e.Message.Channel.Mention, true);
+        }
 
+        private static void AddMsgAuthor(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
             if (e.Message.Author != null)
-                embed.AddField("User", e.Message.Author.Mention, true);
+                em.AddField("User", e.Message.Author.Mention, true);
+        }
 
+        private static void AddContent(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
             if (!string.IsNullOrWhiteSpace(e.Message.Content))
-                embed.AddField("Content", e.Message.Content.Trim());
+                em.AddField("Content", e.Message.Content.Trim());
+        }
 
-            if (e.Message.Embeds.Count > 0)
+        private static void AddEmbed(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
+            if (e.Message.Embeds.Count == 0) return;
+            foreach (var mEmb in e.Message.Embeds)
             {
-                foreach (var mEmb in e.Message.Embeds)
-                {
-                    if (!mEmb.Type.Equals("image")) continue;
-                    if (!DiscordHelper.ImageFormats().Any(x => mEmb.Url.ToString().EndsWith($".{x}"))) continue;
-                    embed.WithImageUrl(mEmb.Url);
-                    break;
-                }
+                if (!mEmb.Type.Equals("image")) continue;
+                if (!DiscordHelper.ImageFormats().Any(x => mEmb.Url.ToString().EndsWith($".{x}"))) continue;
+                em.WithImageUrl(mEmb.Url);
+                break;
             }
+        }
 
-            embed.WithFooter(e.Message.CreationTimestamp < DateTimeOffset.Now.AddDays(-1)
+        private static void AddFooter(DiscordEmbedBuilder em, MessageDeleteEventArgs e)
+        {
+            em.WithFooter(e.Message.CreationTimestamp < DateTimeOffset.Now.AddDays(-1)
                     ? $"{e.Message.CreationTimestamp:dd. MMMM yyyy}"
                     : e.Message.CreationTimestamp.Humanize(),
                 "https://i.imgur.com/FkOFUCC.png");
-            
-            await channel.SendMessageAsync(embed.Build());
         }
-
-        /*foreach (var attachment in e.Message.Attachments)
-        {
-            using var c = new HttpClient();
-            var r = await c.GetAsync(attachment.ProxyUrl);
-            r.EnsureSuccessStatusCode();
-            var s = await r.Content.ReadAsStreamAsync();
-            dict.Add(attachment.FileName, s);
-        }*/
     }
 }
