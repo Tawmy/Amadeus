@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Amadeus.Db\Amadeus.Db.csproj" />
+      <ProjectReference Include="..\xivapi-cs\xivapi-cs\xivapi-cs.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +29,18 @@
       <PackageReference Include="DSharpPlus" Version="4.0.1" />
       <PackageReference Include="DSharpPlus.CommandsNext" Version="4.0.1" />
       <PackageReference Include="DSharpPlus.Interactivity" Version="4.0.1" />
+      <PackageReference Include="SkiaSharp" Version="2.80.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\XivCharacterFrame.png" />
+      <EmbeddedResource Include="Resources\XivCharacterFrame.png" />
+      <None Remove="Resources\Vollkorn-Regular.ttf" />
+      <EmbeddedResource Include="Resources\Vollkorn-Regular.ttf" />
+      <None Remove="Resources\OpenSans-Regular.ttf" />
+      <EmbeddedResource Include="Resources\OpenSans-Regular.ttf" />
+      <None Remove="Resources\XivCharacterTemplate.png" />
+      <EmbeddedResource Include="Resources\XivCharacterTemplate.png" />
     </ItemGroup>
 
 </Project>

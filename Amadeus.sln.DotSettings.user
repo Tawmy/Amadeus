@@ -1,22 +1,4 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=316ed522_002D9021_002D4e40_002D9cbd_002Dbaaa52433653/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestConfigOptions" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.DatabaseTests.TestConfigOptions&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.ConfigTests.LoadConfigs&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.ConfigTests.GetCommandPrefixAsString&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.ConfigTests.GetCommandPrefixAsStringForGuild&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.ConfigTests.SetPrefixForTestGuild&lt;/TestId&gt;
-  &lt;/TestAncestor&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7aff273c_002D798b_002D417f_002Dbdb9_002D07a0fe064112/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="SetPrefixForTestGuild" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/Users/tawmy/Git/Amadeus/Amadeus.Tests" Presentation="&amp;lt;Amadeus.Tests&amp;gt;" /&gt;
-&lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=81b5ef6f_002D5360_002D46e3_002Db8e1_002Dd2ccf9f1bc26/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ConfigTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Or&gt;
-    &lt;TestAncestor&gt;
-      &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.ConfigTests&lt;/TestId&gt;
-      &lt;TestId&gt;NUnit3x::9A00AC8F-DA61-44EF-BC39-337356F59B23::net5.0::Amadeus.Tests.DatabaseTests.TestConfigOptions&lt;/TestId&gt;
-    &lt;/TestAncestor&gt;
-    &lt;ProjectFile&gt;9A00AC8F-DA61-44EF-BC39-337356F59B23/f:DatabaseTests.cs&lt;/ProjectFile&gt;
-  &lt;/Or&gt;
-&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/SweaWarningsMode/@EntryValue">ShowAndRun</s:String>
+	
+	
