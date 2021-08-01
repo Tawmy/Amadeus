@@ -7,6 +7,7 @@ namespace Amadeus.Bot.Statics
         public static readonly int TextSizeName = 48;
         public static readonly int TextSizeTitle = 28;
         public static readonly int TextSizeJobs = 26;
+        public static readonly int TextSizeServer = 28;
 
         public static readonly (int, int) TotalDimensions = (1200, 873);
 
@@ -21,5 +22,7 @@ namespace Amadeus.Bot.Statics
         public static readonly (int, int) PortraitLocation = (26, 68);
         public static readonly (int, int) CharacterFrameLocation = (18, 22);
         public static readonly (int, int) JobIconLocation = (225, 39);
+
+        public static readonly (int, int) Server = (1100, 340);
     }
 }
