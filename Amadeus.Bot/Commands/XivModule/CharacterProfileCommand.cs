@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Amadeus.Bot.Helpers;
 using Amadeus.Bot.Statics;
@@ -46,6 +48,8 @@ namespace Amadeus.Bot.Commands.XivModule
             using (var bitmap = SKBitmap.Decode(stream, info))
             {
                 var canvas = new SKCanvas(bitmap);
+                await AddCharacterPortrait(canvas, character.Character);
+                await AddCharacterFrame(canvas, character.Character);
                 AddCharacterName(canvas, vollkorn, character.Character);
                 AddJobLevels(canvas, opensans, character.Character);
                 canvas.DrawBitmap(bitmap, 0, 0);
@@ -60,6 +64,31 @@ namespace Amadeus.Bot.Commands.XivModule
         {
             await using var stream = ResourceHelper.GetResource($"{name}.ttf");
             return SKTypeface.FromStream(stream);
+        }
+
+        private static async Task AddCharacterPortrait(SKCanvas c, CharacterBase ch)
+        {
+            // get portrait
+            var client = new WebClient();
+            var portraitArray = await client.DownloadDataTaskAsync(ch.Portrait);
+            var portrait = SKBitmap.Decode(new MemoryStream(portraitArray));
+
+            // resize portrait
+            portrait = portrait.Resize(new SKSizeI(564, 769), SKFilterQuality.High);
+
+            // crop portrait
+            var image = SKImage.FromBitmap(portrait);
+            var portraitCropped = image.Subset(SKRectI.Create(60, 0, image.Width - 60 * 2, image.Height));
+
+            // draw portrait on canvas
+            c.DrawImage(portraitCropped, 26, 68);
+        }
+
+        private static async Task AddCharacterFrame(SKCanvas c, CharacterExtended ch)
+        {
+            await using var stream = ResourceHelper.GetResource("XivCharacterFrame.png");
+            var b2 = SKBitmap.Decode(stream);
+            c.DrawBitmap(b2, SKRect.Create(18, 22, 459, 833));
         }
 
         private static void AddCharacterName(SKCanvas c, SKTypeface t, CharacterExtended ch)
@@ -108,7 +137,8 @@ namespace Amadeus.Bot.Commands.XivModule
             foreach (var job in ch.ClassJobs)
             {
                 if (job.Level <= 0) continue;
-                DrawTextCentered(job.Level.ToString(), XivCharacterProfile.GetJobCoordinates(job.Job.Abbreviation), c, paint);
+                DrawTextCentered(job.Level.ToString(), XivCharacterProfile.GetJobCoordinates(job.Job.Abbreviation), c,
+                    paint);
             }
         }
 
