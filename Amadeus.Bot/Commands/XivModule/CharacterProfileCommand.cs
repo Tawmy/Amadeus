@@ -53,6 +53,7 @@ namespace Amadeus.Bot.Commands.XivModule
                 await AddCharacterFrame(canvas);
                 AddActiveJobIcon(canvas, character.Character);
                 AddCharacterName(canvas, vollkorn, character.Character);
+                AddItemLevel(canvas, opensans, character.Character);
                 AddServer(canvas, opensans, character.Character);
                 AddJobLevels(canvas, opensans, character.Character);
                 canvas.DrawBitmap(bitmap, 0, 0);
@@ -140,6 +141,20 @@ namespace Amadeus.Bot.Commands.XivModule
 
             // always draw name
             DrawTextCentered(ch.Name, coorName, c, paintName);
+        }
+
+        private static void AddItemLevel(SKCanvas c, SKTypeface t, CharacterExtended ch)
+        {
+            var p = new SKPaint
+            {
+                IsAntialias = true,
+                Typeface = t,
+                TextSize = XivCharacterProfile.TextSizeItemLevel,
+                Color = SKColors.White
+            };
+            var (x, y) = XivCharacterProfile.ItemLevel;
+            var iLevel = XivHelper.CalcItemLevel(ch);
+            c.DrawText(iLevel.ToString(), x, y, p);
         }
 
         private static void AddServer(SKCanvas c, SKTypeface t, CharacterExtended ch)
