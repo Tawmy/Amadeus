@@ -43,13 +43,14 @@ namespace Amadeus.Bot.Commands.XivModule
             var opensans = await GetFont("OpenSans-Regular");
             var vollkorn = await GetFont("Vollkorn-Regular");
 
-            var info = new SKImageInfo(1200, 873);
+            var (dimX, dimY) = XivCharacterProfile.TotalDimensions;
+            var info = new SKImageInfo(dimX, dimY);
             await using (var stream = ResourceHelper.GetResource("XivCharacterTemplate.png"))
             using (var bitmap = SKBitmap.Decode(stream, info))
             {
                 var canvas = new SKCanvas(bitmap);
                 await AddCharacterPortrait(canvas, character.Character);
-                await AddCharacterFrame(canvas, character.Character);
+                await AddCharacterFrame(canvas);
                 AddActiveJobIcon(canvas, character.Character);
                 AddCharacterName(canvas, vollkorn, character.Character);
                 AddJobLevels(canvas, opensans, character.Character);
@@ -75,21 +76,25 @@ namespace Amadeus.Bot.Commands.XivModule
             var portrait = SKBitmap.Decode(new MemoryStream(portraitArray));
 
             // resize portrait
-            portrait = portrait.Resize(new SKSizeI(564, 769), SKFilterQuality.High);
+            var (dimX, dimY) = XivCharacterProfile.PortraitDimensions;
+            portrait = portrait.Resize(new SKSizeI(dimX, dimY), SKFilterQuality.High);
 
             // crop portrait
             var image = SKImage.FromBitmap(portrait);
-            var portraitCropped = image.Subset(SKRectI.Create(60, 0, image.Width - 60 * 2, image.Height));
+            var crop = XivCharacterProfile.PortraitCropX;
+            var portraitCropped = image.Subset(SKRectI.Create(crop, 0, image.Width - crop * 2, image.Height));
 
             // draw portrait on canvas
-            c.DrawImage(portraitCropped, 26, 68);
+            var (locX, locY) = XivCharacterProfile.PortraitLocation;
+            c.DrawImage(portraitCropped, locX, locY);
         }
 
-        private static async Task AddCharacterFrame(SKCanvas c, CharacterExtended ch)
+        private static async Task AddCharacterFrame(SKCanvas c)
         {
             await using var stream = ResourceHelper.GetResource("XivCharacterFrame.png");
             var b2 = SKBitmap.Decode(stream);
-            c.DrawBitmap(b2, 18, 22);
+            var (locX, locY) = XivCharacterProfile.CharacterFrameLocation;
+            c.DrawBitmap(b2, locX, locY);
         }
 
         private static void AddActiveJobIcon(SKCanvas c, CharacterExtended ch)
@@ -99,7 +104,8 @@ namespace Amadeus.Bot.Commands.XivModule
 
             var icon = ResourceHelper.GetResource($"Jobs.{abbr.ToUpper()}.png");
             var b = SKBitmap.Decode(icon);
-            c.DrawBitmap(b, 225, 39);
+            var (locX, locY) = XivCharacterProfile.JobIconLocation;
+            c.DrawBitmap(b, locX, locY);
         }
 
         private static void AddCharacterName(SKCanvas c, SKTypeface t, CharacterExtended ch)
@@ -148,14 +154,15 @@ namespace Amadeus.Bot.Commands.XivModule
             foreach (var job in ch.ClassJobs)
             {
                 if (job.Level <= 0) continue;
-                DrawTextCentered(job.Level.ToString(), XivCharacterProfile.GetJobCoordinates(job.Job.Abbreviation), c,
+                DrawTextCentered(job.Level.ToString(), XivCharacterProfileJobs.GetJobCoordinates(job.Job.Abbreviation),
+                    c,
                     paint);
             }
         }
 
-        private static void DrawTextCentered(string text, XivCharacterProfile.Coordinates coor, SKCanvas c, SKPaint p)
+        private static void DrawTextCentered(string text, (int, int) coor, SKCanvas c, SKPaint p)
         {
-            DrawTextCentered(text, coor.X, coor.Y, c, p);
+            DrawTextCentered(text, coor.Item1, coor.Item2, c, p);
         }
 
         private static void DrawTextCentered(string text, int x, int y, SKCanvas c, SKPaint p)
