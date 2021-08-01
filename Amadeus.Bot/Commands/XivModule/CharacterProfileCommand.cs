@@ -50,6 +50,7 @@ namespace Amadeus.Bot.Commands.XivModule
                 var canvas = new SKCanvas(bitmap);
                 await AddCharacterPortrait(canvas, character.Character);
                 await AddCharacterFrame(canvas, character.Character);
+                AddActiveJobIcon(canvas, character.Character);
                 AddCharacterName(canvas, vollkorn, character.Character);
                 AddJobLevels(canvas, opensans, character.Character);
                 canvas.DrawBitmap(bitmap, 0, 0);
@@ -88,7 +89,17 @@ namespace Amadeus.Bot.Commands.XivModule
         {
             await using var stream = ResourceHelper.GetResource("XivCharacterFrame.png");
             var b2 = SKBitmap.Decode(stream);
-            c.DrawBitmap(b2, SKRect.Create(18, 22, 459, 833));
+            c.DrawBitmap(b2, 18, 22);
+        }
+
+        private static void AddActiveJobIcon(SKCanvas c, CharacterExtended ch)
+        {
+            var abbr = ch.ActiveClassJob.Job?.Abbreviation ?? ch.ActiveClassJob.Class?.Abbreviation;
+            if (abbr == null) return;
+
+            var icon = ResourceHelper.GetResource($"Jobs.{abbr.ToUpper()}.png");
+            var b = SKBitmap.Decode(icon);
+            c.DrawBitmap(b, 225, 39);
         }
 
         private static void AddCharacterName(SKCanvas c, SKTypeface t, CharacterExtended ch)
