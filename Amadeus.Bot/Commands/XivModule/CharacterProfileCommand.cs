@@ -38,42 +38,44 @@ namespace Amadeus.Bot.Commands.XivModule
         {
             c ??= new XivApiClient();
 
-            var character = await c.CharacterProfileExtended(id);
+            // get character from api
+            var character = await c.CharacterProfileExtended(id, fetchFreeCompany: true);
 
+            // load fonts
             var opensans = await GetFont("OpenSans-Regular");
             var vollkorn = await GetFont("Vollkorn-Regular");
 
+            // create image from default dimensions
             var (dimX, dimY) = XivCharacterProfile.TotalDimensions;
             var info = new SKImageInfo(dimX, dimY);
-            await using (var stream = ResourceHelper.GetResource("XivCharacterTemplate.png"))
-            using (var bitmap = SKBitmap.Decode(stream, info))
-            {
-                var canvas = new SKCanvas(bitmap);
-                await AddCharacterPortrait(canvas, character.Character);
-                await AddCharacterFrame(canvas);
-                AddActiveJobIcon(canvas, character.Character);
-                AddCharacterName(canvas, vollkorn, character.Character);
-                AddItemLevel(canvas, opensans, character.Character);
-                AddServer(canvas, opensans, character.Character);
-                AddJobLevels(canvas, opensans, character.Character);
-                canvas.DrawBitmap(bitmap, 0, 0);
-                var imgStream = SKImage.FromPixels(bitmap.PeekPixels()).Encode().AsStream();
-                var msg = new DiscordMessageBuilder();
-                msg.WithFile($"{character.Character.Name}.png", imgStream);
-                await ctx.RespondAsync(msg);
-            }
-        }
 
-        private static async Task<SKTypeface> GetFont(string name)
-        {
-            await using var stream = ResourceHelper.GetResource($"{name}.ttf");
-            return SKTypeface.FromStream(stream);
+            // load background template
+            await using var stream = ResourceHelper.GetResource("XivCharacterTemplate.png");
+            using var bitmap = SKBitmap.Decode(stream, info);
+            var canvas = new SKCanvas(bitmap);
+
+            // print data onto canvas
+            await AddCharacterPortrait(canvas, character.Character);
+            await AddCharacterFrame(canvas);
+            AddActiveJobIcon(canvas, character.Character);
+            AddCharacterName(canvas, vollkorn, character.Character);
+            await AddCompanies(canvas, opensans, character);
+            AddItemLevel(canvas, opensans, character.Character);
+            AddServer(canvas, opensans, character.Character);
+            AddJobLevels(canvas, opensans, character.Character);
+
+            canvas.DrawBitmap(bitmap, 0, 0);
+            var imgStream = SKImage.FromPixels(bitmap.PeekPixels()).Encode().AsStream();
+
+            var msg = new DiscordMessageBuilder();
+            msg.WithFile($"{character.Character.Name}.png", imgStream);
+            await ctx.RespondAsync(msg);
         }
 
         private static async Task AddCharacterPortrait(SKCanvas c, CharacterBase ch)
         {
             // get portrait
-            var client = new WebClient();
+            using var client = new WebClient();
             var portraitArray = await client.DownloadDataTaskAsync(ch.Portrait);
             var portrait = SKBitmap.Decode(new MemoryStream(portraitArray));
 
@@ -143,6 +145,55 @@ namespace Amadeus.Bot.Commands.XivModule
             DrawTextCentered(ch.Name, coorName, c, paintName);
         }
 
+        private static async Task AddCompanies(SKCanvas c, SKTypeface t, CharacterProfileExtended ce)
+        {
+            var (textTopX, textTopY) = XivCharacterProfile.TextTop;
+            var title = "- - -";
+
+            var offsetX = 0;
+            if (ce.FreeCompany != null || ce.Character.GrandCompany?.Company != null)
+            {
+                // get offset if user is in grand- or free company
+                (offsetX, _) = XivCharacterProfile.LogoTopOffset;
+            }
+                
+            offsetX /= 2;
+
+            var p = new SKPaint
+            {
+                IsAntialias = true,
+                Typeface = t,
+                TextSize = XivCharacterProfile.TextTopSize,
+                Color = SKColors.White
+            };
+
+            if (ce.FreeCompany != null)
+            {
+                // if user is in free company, print fc crest in dedicated box
+                title = ce.FreeCompany.Name;
+                var crest = await XivHelper.GetFreeCompanyIcon(ce.FreeCompany);
+                var width = p.MeasureText(title);
+                var (logoTopX, logoTopY) = XivCharacterProfile.LogoTop;
+                c.DrawImage(crest, logoTopX - width / 2 + offsetX, logoTopY);
+
+                if (ce.Character.GrandCompany?.Company != null)
+                {
+                    // if user is part of a gc in addition to an fc, print gc logo in second row
+                    DrawGrandCompanyLogo(ce.Character.GrandCompany, c, 0, false);
+                }
+            }
+            else if (ce.Character.GrandCompany?.Company != null)
+            {
+                // if user is not part of an fc, but is part of a gc, print gc logo in dedicated box 
+                title = ce.Character.GrandCompany.Company.Name;
+                var width = Convert.ToInt32(p.MeasureText(title));
+                DrawGrandCompanyLogo(ce.Character.GrandCompany, c, width * -1 / 2 + offsetX, true);
+            }
+
+            // print fc name, gc name, or default string in dedicated box
+            DrawTextCentered(title, textTopX + offsetX, textTopY, c, p);
+        }
+
         private static void AddItemLevel(SKCanvas c, SKTypeface t, CharacterExtended ch)
         {
             var p = new SKPaint
@@ -157,7 +208,7 @@ namespace Amadeus.Bot.Commands.XivModule
             c.DrawText(iLevel.ToString(), x, y, p);
         }
 
-        private static void AddServer(SKCanvas c, SKTypeface t, CharacterExtended ch)
+        private static void AddServer(SKCanvas c, SKTypeface t, CharacterBase ch)
         {
             var p = new SKPaint
             {
@@ -190,6 +241,14 @@ namespace Amadeus.Bot.Commands.XivModule
             }
         }
 
+        #region Helper methods
+
+        private static async Task<SKTypeface> GetFont(string name)
+        {
+            await using var stream = ResourceHelper.GetResource($"{name}.ttf");
+            return SKTypeface.FromStream(stream);
+        }
+
         private static void DrawTextCentered(string text, (int, int) coor, SKCanvas c, SKPaint p)
         {
             DrawTextCentered(text, coor.Item1, coor.Item2, c, p);
@@ -199,5 +258,14 @@ namespace Amadeus.Bot.Commands.XivModule
         {
             c.DrawText(text, x - p.MeasureText(text) / 2, y, p);
         }
+
+        private static void DrawGrandCompanyLogo(GrandCompanyExtended gc, SKCanvas c, int offset, bool top)
+        {
+            var gcIcon = XivHelper.GetGrandCompanyIcon(gc);
+            var (gcIconX, gcIconY) = top ? XivCharacterProfile.LogoTop : XivCharacterProfile.LogoBottom;
+            c.DrawImage(gcIcon, gcIconX + offset, gcIconY + 1);
+        }
+
+        #endregion
     }
 }

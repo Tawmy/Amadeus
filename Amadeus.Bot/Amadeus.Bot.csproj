@@ -117,6 +117,12 @@
       <EmbeddedResource Include="Resources\Jobs\WHM.png" />
       <None Remove="Resources\Jobs\WVR.png" />
       <EmbeddedResource Include="Resources\Jobs\WVR.png" />
+      <None Remove="Resources\GcI.png" />
+      <EmbeddedResource Include="Resources\GcI.png" />
+      <None Remove="Resources\GcM.png" />
+      <EmbeddedResource Include="Resources\GcM.png" />
+      <None Remove="Resources\GcO.png" />
+      <EmbeddedResource Include="Resources\GcO.png" />
     </ItemGroup>
 
 </Project>
