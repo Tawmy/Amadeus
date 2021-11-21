@@ -7,4 +7,19 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="DSharpPlus" Version="4.2.0-nightly-01045" />
+      <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0-nightly-01045" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Amadeus.Db\Amadeus.Db.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="config.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>
