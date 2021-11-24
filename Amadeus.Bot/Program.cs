@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Reflection;
+using System.Text.Json;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
+using Amadeus.Bot.Modules;
 using Amadeus.Db.Helper;
 using DSharpPlus;
 using DSharpPlus.SlashCommands;
@@ -25,7 +27,7 @@ public class Program
         {
             await ConfigHelper.LoadConfigs();
             _amadeus = InitAmadeus();
-            _amadeus.UseSlashCommands();
+            RegisterCommands();
 
             await _amadeus.ConnectAsync();
             var hlp = new StartupHelper(_amadeus, _cfg);
@@ -44,5 +46,11 @@ public class Program
             TokenType = TokenType.Bot,
             Intents = DiscordIntents.All
         });
+    }
+    
+    private void RegisterCommands()
+    {
+        var commands = _amadeus.UseSlashCommands();
+        commands.RegisterCommands(Assembly.GetExecutingAssembly());
     }
 }
