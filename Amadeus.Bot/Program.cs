@@ -44,7 +44,8 @@ public class Program
         {
             Token = _cfg.Token,
             TokenType = TokenType.Bot,
-            Intents = DiscordIntents.All
+            Intents = DiscordIntents.Guilds
+                | DiscordIntents.GuildMembers
         });
     }
     

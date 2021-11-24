@@ -7,7 +7,7 @@ namespace Amadeus.Bot.Commands.ModerationModule;
 
 public static class VerifyCommand
 {
-    public static async Task Run(ContextMenuContext ctx)
+    public static async Task RunMenu(ContextMenuContext ctx)
     {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
 
@@ -31,18 +31,54 @@ public static class VerifyCommand
             return;
         }
 
-        await ctx.TargetMember?.GrantRoleAsync(role,
-            $"Verification by {ctx.Member.Username}#{ctx.Member.Discriminator}")!;
+        var embed = await GrantRoleAndGetEmbed(ctx.TargetMember!, ctx.Member, role);
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
+    }
 
+    public static async Task RunSlash(InteractionContext ctx, DiscordUser user)
+    {
+        await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
+
+        var member = await ctx.Guild.GetMemberAsync(user.Id);
+
+        if (member == null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Member not found."));
+            return;
+        }
+        
+        var role = await ConfigHelper.GetRole("Verification Role", ctx.Guild);
+        if (role == null)
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Verification role not found."));
+            return;
+        }
+        
+        if (member.Roles.Contains(role))
+        {
+            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
+                $"{member.Nickname ?? member.Username} is already verified."));
+            return;
+        }
+
+        var embed = await GrantRoleAndGetEmbed(member, ctx.Member, role);
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
+    }
+
+    private static async Task<DiscordEmbed> GrantRoleAndGetEmbed(DiscordMember targetMember, DiscordMember actingMember, DiscordRole role)
+    {
+        await targetMember.GrantRoleAsync(role,
+            $"Verification by {actingMember.Username}#{actingMember.Discriminator}")!;
+        
         var embed = new DiscordEmbedBuilder
         {
-            Title = ctx.TargetMember.Nickname ?? ctx.TargetMember.Username,
-            Description = ctx.TargetMember.Mention
+            Title = targetMember.Nickname ?? targetMember.Username,
+            Description = targetMember.Mention
         };
-        embed.WithAuthor($"{ctx.Member.Nickname ?? ctx.Member.Username} verified:",
-            iconUrl: ctx.Member.AvatarUrl);
-        embed.WithThumbnail(ctx.TargetMember.AvatarUrl);
+        embed.WithAuthor($"{actingMember.Nickname ?? actingMember.Username} verified:",
+            iconUrl: actingMember.AvatarUrl);
+        embed.WithThumbnail(targetMember.AvatarUrl);
         embed.WithColor(DiscordColor.Blurple);
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()));
+        return embed.Build();
     }
 }

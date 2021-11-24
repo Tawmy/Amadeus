@@ -11,6 +11,12 @@ public class ModerationModule : ApplicationCommandModule
     [SlashRequirePermissions(Permissions.ManageRoles)]
     public async Task MenuVerify(ContextMenuContext ctx)
     {
-        await Commands.ModerationModule.VerifyCommand.Run(ctx);
+        await Commands.ModerationModule.VerifyCommand.RunMenu(ctx);
+    }
+    
+    [SlashCommand("verify", "Verifies a user")]
+    public async Task SlashVerify(InteractionContext ctx, [Option("User", "User to verify")] DiscordUser user)
+    {
+        await Commands.ModerationModule.VerifyCommand.RunSlash(ctx, user);
     }
 }
