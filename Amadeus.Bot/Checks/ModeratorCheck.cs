@@ -21,8 +21,11 @@ public class ModeratorSlashAttribute : SlashCheckBaseAttribute
 
 public class ModeratorMenuAttribute : ContextMenuCheckBaseAttribute
 {
+    public ContextMenuContext? Ctx;
     public override async Task<bool> ExecuteChecksAsync(ContextMenuContext ctx)
     {
+        Ctx = ctx;
+        
         if (ctx.Guild == null) return true;
         if (ctx.Member == null) return false;
 

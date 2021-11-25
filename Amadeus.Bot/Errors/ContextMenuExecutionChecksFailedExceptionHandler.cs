@@ -6,24 +6,24 @@ using DSharpPlus.SlashCommands.EventArgs;
 
 namespace Amadeus.Bot.Errors;
 
-public static class SlashExecutionChecksFailedExceptionHandler
+public static class ContextMenuExecutionChecksFailedExceptionHandler
 {
-    public static async Task HandleException(SlashCommandErrorEventArgs e,
-        SlashExecutionChecksFailedException ex)
+    public static async Task HandleException(ContextMenuErrorEventArgs e,
+        ContextMenuExecutionChecksFailedException ex)
     {
         var check = ex.FailedChecks[0];
 
         switch (check)
         {
-            case ModeratorSlashAttribute attr:
-                var embed = GetModeratorSlashAttributeEmbed(attr);
+            case ModeratorMenuAttribute attr:
+                var embed = GetModeratorMenuAttributeEmbed(attr);
                 await e.Context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().AddEmbed(embed));
                 break;
         }
     }
-
-    private static DiscordEmbed GetModeratorSlashAttributeEmbed(ModeratorSlashAttribute attr)
+    
+    private static DiscordEmbed GetModeratorMenuAttributeEmbed(ModeratorMenuAttribute attr)
     {
         var embed = new DiscordEmbedBuilder
         {
