@@ -25,10 +25,11 @@ public static class SlashExecutionChecksFailedExceptionHandler
 
     private static DiscordEmbed GetModeratorSlashAttributeEmbed(ModeratorSlashAttribute attr)
     {
+        var roleName = attr.ModeratorRole?.Name ?? "moderator";
         var embed = new DiscordEmbedBuilder
         {
             Title = "Missing permissions",
-            Description = "You need the moderator role to run this command."
+            Description = $"You need the {roleName} role to run this command."
         };
         embed.WithColor(DiscordColor.IndianRed);
         if (attr.Ctx != null)

@@ -25,10 +25,11 @@ public static class ContextMenuExecutionChecksFailedExceptionHandler
     
     private static DiscordEmbed GetModeratorMenuAttributeEmbed(ModeratorMenuAttribute attr)
     {
+        var roleName = attr.ModeratorRole?.Name ?? "moderator";
         var embed = new DiscordEmbedBuilder
         {
             Title = "Missing permissions",
-            Description = "You need the moderator role to run this command."
+            Description = $"You need the {roleName} role to run this command."
         };
         embed.WithColor(DiscordColor.IndianRed);
         if (attr.Ctx != null)
