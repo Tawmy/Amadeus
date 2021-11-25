@@ -5,8 +5,12 @@ namespace Amadeus.Bot.Checks;
 
 public class ModeratorSlashAttribute : SlashCheckBaseAttribute
 {
+    public InteractionContext? Ctx;
+    
     public override async Task<bool> ExecuteChecksAsync(InteractionContext ctx)
     {
+        Ctx = ctx;
+        
         if (ctx.Guild == null) return true;
         if (ctx.Member == null) return false;
 

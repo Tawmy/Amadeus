@@ -5,6 +5,7 @@ using Amadeus.Bot.Models;
 using Amadeus.Db.Helper;
 using DSharpPlus;
 using DSharpPlus.SlashCommands;
+using DSharpPlus.SlashCommands.EventArgs;
 
 namespace Amadeus.Bot;
 
@@ -50,5 +51,6 @@ public class Program
     {
         var commands = _amadeus.UseSlashCommands();
         commands.RegisterCommands(Assembly.GetExecutingAssembly());
+        commands.SlashCommandErrored += Errors.ErrorHandler.CommandsOnSlashCommandErrored;
     }
 }
