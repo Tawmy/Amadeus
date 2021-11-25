@@ -15,14 +15,14 @@ public class AmadeusContext : DbContext
     public AmadeusContext()
     {
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (!optionsBuilder.IsConfigured)
             optionsBuilder.UseNpgsql(Configuration.ConnectionString).UseSnakeCaseNamingConvention();
         base.OnConfiguring(optionsBuilder);
     }
-    
+
     #region DbSets
 
     public DbSet<Config> Configs { get; set; }

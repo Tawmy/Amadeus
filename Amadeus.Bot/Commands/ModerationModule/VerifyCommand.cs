@@ -46,14 +46,14 @@ public static class VerifyCommand
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Member not found."));
             return;
         }
-        
+
         var role = await ConfigHelper.GetRole("Verification Role", ctx.Guild);
         if (role == null)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Verification role not found."));
             return;
         }
-        
+
         if (member.Roles.Contains(role))
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(
@@ -65,11 +65,12 @@ public static class VerifyCommand
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed));
     }
 
-    private static async Task<DiscordEmbed> GrantRoleAndGetEmbed(DiscordMember targetMember, DiscordMember actingMember, DiscordRole role)
+    private static async Task<DiscordEmbed> GrantRoleAndGetEmbed(DiscordMember targetMember, DiscordMember actingMember,
+        DiscordRole role)
     {
         await targetMember.GrantRoleAsync(role,
             $"Verification by {actingMember.Username}#{actingMember.Discriminator}")!;
-        
+
         var embed = new DiscordEmbedBuilder
         {
             Title = targetMember.Nickname ?? targetMember.Username,
