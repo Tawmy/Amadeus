@@ -43,9 +43,7 @@ public class Program
         return new DiscordClient(new DiscordConfiguration
         {
             Token = _cfg.Token,
-            TokenType = TokenType.Bot,
-            Intents = DiscordIntents.Guilds
-                | DiscordIntents.GuildMembers
+            TokenType = TokenType.Bot
         });
     }
     

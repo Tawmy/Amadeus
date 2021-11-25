@@ -39,7 +39,7 @@ public static class VerifyCommand
     {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
 
-        var member = await ctx.Guild.GetMemberAsync(user.Id);
+        var member = user as DiscordMember;
 
         if (member == null)
         {
