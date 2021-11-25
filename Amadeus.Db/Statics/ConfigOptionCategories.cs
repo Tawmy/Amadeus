@@ -8,7 +8,7 @@ public class ConfigOptionCategories : StaticClass<ConfigOptionCategory>
     {
         new(1, 1, "General", "todo"),
         new(2, 2, "Roles", "todo"),
-        new(2, 3, "Channels", "todo")
+        new(3, 3, "Channels", "todo")
     })
     {
     }

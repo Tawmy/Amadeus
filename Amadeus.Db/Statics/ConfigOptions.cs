@@ -8,7 +8,8 @@ public class ConfigOptions : StaticClass<ConfigOption>
     public ConfigOptions() : base(new List<ConfigOption>
     {
         new(1, 1, "Moderator Role", "todo", ConfigType.Role, null, 2),
-        new(2, 2, "Verification Role", "todo", ConfigType.Role, null, 2)
+        new(2, 2, "Verification Role", "todo", ConfigType.Role, null, 2),
+        new(3, 3, "Archive Channel", "todo", ConfigType.Channel, null, 3)
     })
     {
     }

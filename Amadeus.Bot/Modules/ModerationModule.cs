@@ -24,4 +24,16 @@ public class ModerationModule : ApplicationCommandModule
     {
         await VerifyCommand.RunSlash(ctx, user);
     }
+
+    [SlashCommand("archive", "Archives messages from the given channel")]
+    [ModeratorSlash]
+    [SlashRequireBotPermissions(Permissions.ReadMessageHistory)]
+    public async Task SlashArchive(InteractionContext ctx,
+        [Option("Channel", "Channel to archive")]
+        DiscordChannel channel,
+        [Option("Messages", "# of messages to archive. Default and maximum is 1000.")]
+        long msgs = 1000)
+    {
+        await ArchiveCommand.RunSlash(ctx, channel, msgs);
+    }
 }
