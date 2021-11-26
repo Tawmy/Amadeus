@@ -5,6 +5,7 @@ using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
 using Amadeus.Db.Helper;
 using DSharpPlus;
+using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
@@ -33,8 +34,6 @@ public class Program
             RegisterInteractivity();
 
             await _amadeus.ConnectAsync();
-            var hlp = new StartupHelper(_amadeus, _cfg);
-            await hlp.SendStartupMessage();
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
@@ -50,6 +49,7 @@ public class Program
             Intents = DiscordIntents.Guilds 
                       | DiscordIntents.GuildMembers
         });
+        client.GuildDownloadCompleted += ClientOnGuildDownloadCompleted;
         client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
         client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
         return client;
@@ -69,5 +69,10 @@ public class Program
         {
             Timeout = new TimeSpan(0, 0, 0, 5)
         });
+    }
+    
+    private async Task ClientOnGuildDownloadCompleted(DiscordClient sender, GuildDownloadCompletedEventArgs e)
+    {
+        await new StartupHelper(_amadeus, _cfg).SendStartupMessage();
     }
 }
