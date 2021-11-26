@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.ComTypes;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Resources;
 using Amadeus.Db.Helper;
@@ -9,47 +8,57 @@ using DSharpPlus.SlashCommands;
 
 namespace Amadeus.Bot.Commands.ModerationModule;
 
-public static class ArchiveCommand
+public class ArchiveCommand
 {
-    public static async Task RunSlash(InteractionContext ctx, DiscordChannel channel, long maxMsgs)
+    private string SiteStr { get; set; }
+    private readonly InteractionContext _ctx;
+    private readonly DiscordChannel _channel;
+    private readonly int _maxMsgs;
+
+    public ArchiveCommand(InteractionContext ctx, DiscordChannel channel, long maxMsgs)
+    {
+        _ctx = ctx;
+        _channel = channel;
+        _maxMsgs = Convert.ToInt32(maxMsgs > 1000 ? 1000 : maxMsgs);
+        SiteStr = ArchiveParts.GetHeaderAndBodyPartOne(_channel);
+    }
+
+    public async Task RunSlash()
     {
         // Prevent categories from being archived
-        if (channel.IsCategory)
+        if (_channel.IsCategory)
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            await _ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                 new DiscordInteractionResponseBuilder().WithContent("Cannot archive a category."));
             return;
         }
 
-        await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
+        await _ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
 
-        var canDelete = (channel.PermissionsFor(ctx.Guild.CurrentMember) & Permissions.ManageMessages) != 0;
+        var canDelete = (_channel.PermissionsFor(_ctx.Guild.CurrentMember) & Permissions.ManageMessages) != 0;
 
-        var logChannel = await ConfigHelper.GetChannel("Archive Channel", channel.Guild);
+        var logChannel = await ConfigHelper.GetChannel("Archive Channel", _channel.Guild);
         if (logChannel == null)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Archive channel not found."));
+            await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Archive channel not found."));
             return;
         }
 
-        // Max amount of messages user can archive at once is 1000
-        var intMaxMsgs = Convert.ToInt32(maxMsgs > 1000 ? 1000 : maxMsgs);
-
         // Get most recent N messages, filter out bot messages and empty objects
-        var msgs = await channel.GetMessagesAsync(intMaxMsgs);
+        var msgs = await _channel.GetMessagesAsync(_maxMsgs);
         msgs = msgs.Where(x => x != null).ToList();
         if (msgs.Count == 0)
         {
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No messages found"));
+            await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("No messages found"));
             return;
         }
 
-        var siteStr = GetSiteStr(channel, msgs);
+        FillSiteStr(msgs);
 
-        await PostFileAndDetailedEmbedInLogChannel(channel, msgs, siteStr, logChannel);
+        await PostFileAndDetailedEmbedInLogChannel(msgs, logChannel);
 
         // Post simple response in channel where command was run
-        var responseString = $"{msgs.Count} messages from {channel.Mention} archived into {logChannel.Mention}.";
+        var responseString = $"{msgs.Count} messages from {_channel.Mention} archived into {logChannel.Mention}.";
 
         var webhookBuilder = new DiscordWebhookBuilder().WithContent(responseString);
 
@@ -61,49 +70,45 @@ public static class ArchiveCommand
             webhookBuilder.AddComponents(delButton, doneButton);
         }
 
-        var botMsg = await ctx.EditResponseAsync(webhookBuilder);
+        var botMsg = await _ctx.EditResponseAsync(webhookBuilder);
 
         // End execution here if bot does not have permissions to manage messages
         if (!canDelete) return;
-        await HandleDeletion(ctx, channel, botMsg, msgs, responseString);
+        await HandleDeletion(botMsg, msgs, responseString);
     }
 
-    private static string GetSiteStr(DiscordChannel channel, IReadOnlyList<DiscordMessage> msgs)
+    private void FillSiteStr(IReadOnlyList<DiscordMessage> msgs)
     {
-        // Create site string, then continuously add to it
-        var siteStr = ArchiveParts.GetHeaderAndBodyPartOne(channel);
-
         // Add author header
-        siteStr = msgs.Where(x => x.Author != null && !x.Author.IsBot)
+        SiteStr = msgs.Where(x => x.Author != null && !x.Author.IsBot)
             .Select(x => x.Author)
             .Distinct()
-            .Aggregate(siteStr, (current, author) => current + ArchiveParts.GetAuthorHtmlString(author));
+            .Aggregate(SiteStr, (current, author) => current + ArchiveParts.GetAuthorHtmlString(author));
 
-        siteStr += ArchiveParts.GetBridgeHtmlString();
+        SiteStr += ArchiveParts.GetBridgeHtmlString();
 
         // Add all the messages to the string
-        siteStr = msgs.Reverse().Aggregate(siteStr, (current, msg) => current + ArchiveParts.GetMessageHtmlString(msg));
+        SiteStr = msgs.Reverse()
+            .Aggregate(SiteStr, (current, msg) => current + ArchiveParts.GetMessageHtmlString(msg));
 
-        siteStr += ArchiveParts.GetEndingHtmlString();
-        return siteStr;
+        SiteStr += ArchiveParts.GetEndingHtmlString();
     }
 
-    private static async Task PostFileAndDetailedEmbedInLogChannel(DiscordChannel channel,
-        IReadOnlyList<DiscordMessage> msgs,
-        string siteStr, DiscordChannel logChannel)
+    private async Task PostFileAndDetailedEmbedInLogChannel(IReadOnlyCollection<DiscordMessage> msgs,
+        DiscordChannel logChannel)
     {
         // Post file and detailed embed in log channel
-        var embed = GetEmbed(channel, msgs.Count, msgs.Select(x => x.Author).Distinct().ToList());
-        var filename = $"{channel.Name}_{DateTime.Now:yy-MM-dd-HH-mm}.html";
-        await using var stream = StreamHelper.GenerateStreamFromString(siteStr);
+        var embed = GetEmbed(msgs.Count, msgs.Select(x => x.Author).Distinct().ToList());
+        var filename = $"{_channel.Name}_{DateTime.Now:yy-MM-dd-HH-mm}.html";
+        await using var stream = StreamHelper.GenerateStreamFromString(SiteStr);
         var msg = new DiscordMessageBuilder().WithEmbed(embed).WithFile(filename, stream);
         await logChannel.SendMessageAsync(msg);
     }
 
-    private static DiscordEmbed GetEmbed(DiscordChannel channel, int msgs, IReadOnlyCollection<DiscordUser> users)
+    private DiscordEmbed GetEmbed(int msgs, IReadOnlyCollection<DiscordUser> users)
     {
         var embed = new DiscordEmbedBuilder();
-        embed.WithAuthor($"#{channel.Name}", $"https://discordapp.com/channels/{channel.GuildId}/{channel.Id}");
+        embed.WithAuthor($"#{_channel.Name}", $"https://discordapp.com/channels/{_channel.GuildId}/{_channel.Id}");
         embed.AddField("Messages", msgs.ToString(), true);
         embed.AddField("Users", users.Count.ToString(), true);
         embed.AddField("List", string.Join(Environment.NewLine, users.Select(x => x.Mention)));
@@ -115,19 +120,18 @@ public static class ArchiveCommand
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent(responseString));
     }
 
-    private static async Task HandleDeletion(BaseContext ctx, DiscordChannel channel, DiscordMessage botMsg,
-        IEnumerable<DiscordMessage> msgs, string responseString)
+    private async Task HandleDeletion(DiscordMessage botMsg, IEnumerable<DiscordMessage> msgs, string responseString)
     {
         var result = await botMsg.WaitForButtonAsync();
 
         if (result.TimedOut || result.Result.Id.Equals("done"))
         {
             // dumb workaround until i figure out something better
-            await UpdateMessageWithoutButtons(ctx, responseString);
+            await UpdateMessageWithoutButtons(_ctx, responseString);
             return;
         }
 
-        await channel.DeleteMessagesAsync(msgs);
-        await UpdateMessageWithoutButtons(ctx, $"{responseString}{Environment.NewLine}Messages were deleted.");
+        await _channel.DeleteMessagesAsync(msgs);
+        await UpdateMessageWithoutButtons(_ctx, $"{responseString}{Environment.NewLine}Messages were deleted.");
     }
 }

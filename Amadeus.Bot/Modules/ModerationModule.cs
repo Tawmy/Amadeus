@@ -34,6 +34,6 @@ public class ModerationModule : ApplicationCommandModule
         [Option("Messages", "# of messages to archive. Default and maximum is 1000.")]
         long msgs = 1000)
     {
-        await ArchiveCommand.RunSlash(ctx, channel, msgs);
+        await new ArchiveCommand(ctx, channel, msgs).RunSlash();
     }
 }
