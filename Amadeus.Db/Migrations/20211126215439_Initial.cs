@@ -21,6 +21,24 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "assignable_roles",
+                columns: table => new
+                {
+                    id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
+                    guild_id = table.Column<decimal>(type: "numeric(20,0)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_assignable_roles", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_assignable_roles_guilds_guild_id",
+                        column: x => x.guild_id,
+                        principalTable: "guilds",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "configs",
                 columns: table => new
                 {
@@ -42,6 +60,11 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "ix_assignable_roles_guild_id",
+                table: "assignable_roles",
+                column: "guild_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_configs_guild_id",
                 table: "configs",
                 column: "guild_id");
@@ -49,6 +72,9 @@ namespace Amadeus.Db.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "assignable_roles");
+
             migrationBuilder.DropTable(
                 name: "configs");
 

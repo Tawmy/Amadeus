@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Amadeus.Db.Migrations
 {
     [DbContext(typeof(AmadeusContext))]
-    [Migration("20211121204007_Initial")]
+    [Migration("20211126215439_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,6 +22,26 @@ namespace Amadeus.Db.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Amadeus.Db.Models.AssignableRole", b =>
+                {
+                    b.Property<decimal>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric(20,0)")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("GuildId")
+                        .HasColumnType("numeric(20,0)")
+                        .HasColumnName("guild_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_assignable_roles");
+
+                    b.HasIndex("GuildId")
+                        .HasDatabaseName("ix_assignable_roles_guild_id");
+
+                    b.ToTable("assignable_roles", (string)null);
+                });
 
             modelBuilder.Entity("Amadeus.Db.Models.Config", b =>
                 {
@@ -66,6 +86,18 @@ namespace Amadeus.Db.Migrations
                     b.ToTable("guilds", (string)null);
                 });
 
+            modelBuilder.Entity("Amadeus.Db.Models.AssignableRole", b =>
+                {
+                    b.HasOne("Amadeus.Db.Models.Guild", "Guild")
+                        .WithMany("AssignableRoles")
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_assignable_roles_guilds_guild_id");
+
+                    b.Navigation("Guild");
+                });
+
             modelBuilder.Entity("Amadeus.Db.Models.Config", b =>
                 {
                     b.HasOne("Amadeus.Db.Models.Guild", "Guild")
@@ -80,6 +112,8 @@ namespace Amadeus.Db.Migrations
 
             modelBuilder.Entity("Amadeus.Db.Models.Guild", b =>
                 {
+                    b.Navigation("AssignableRoles");
+
                     b.Navigation("Configs");
                 });
 #pragma warning restore 612, 618

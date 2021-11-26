@@ -3,6 +3,7 @@ using System.Text.Json;
 using Amadeus.Bot.Events;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
+using Amadeus.Bot.Modules;
 using Amadeus.Db.Helper;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
@@ -46,7 +47,7 @@ public class Program
         {
             Token = _cfg.Token,
             TokenType = TokenType.Bot,
-            Intents = DiscordIntents.Guilds 
+            Intents = DiscordIntents.Guilds
                       | DiscordIntents.GuildMembers
         });
         client.GuildDownloadCompleted += ClientOnGuildDownloadCompleted;
@@ -58,7 +59,13 @@ public class Program
     private void RegisterCommands()
     {
         var commands = _amadeus.UseSlashCommands();
-        commands.RegisterCommands(Assembly.GetExecutingAssembly());
+#if DEBUG
+        commands.RegisterCommands<ModerationModule>(640467169733246976);
+        commands.RegisterCommands<RolesModule>(640467169733246976);
+#else
+        commands.RegisterCommands<ModerationModule>();
+        commands.RegisterCommands<RolesModule>();
+#endif
         commands.SlashCommandErrored += CommandsOnSlashCommandErroredEvent.CommandsOnSlashCommandErrored;
         commands.ContextMenuErrored += CommandsOnContextMenuErroredEvent.CommandsOnContextMenuErrored;
     }
@@ -67,10 +74,10 @@ public class Program
     {
         _amadeus.UseInteractivity(new InteractivityConfiguration
         {
-            Timeout = new TimeSpan(0, 0, 0, 5)
+            Timeout = new TimeSpan(0, 0, 0, 30)
         });
     }
-    
+
     private async Task ClientOnGuildDownloadCompleted(DiscordClient sender, GuildDownloadCompletedEventArgs e)
     {
         await new StartupHelper(_amadeus, _cfg).SendStartupMessage();

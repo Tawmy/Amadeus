@@ -25,6 +25,7 @@ public class AmadeusContext : DbContext
 
     #region DbSets
 
+    public DbSet<AssignableRole> AssignableRoles { get; set; }
     public DbSet<Config> Configs { get; set; }
     public DbSet<Guild> Guilds { get; set; }
 
