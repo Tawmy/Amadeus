@@ -11,7 +11,7 @@ public static class Configuration
 #if DEBUG
             return @"Host=localhost;Database=amadeus;Username=tawmy";
 #else
-                return string.Empty; // TODO
+            return @"Host=localhost;Database=amadeus;Username=tawmy";
 #endif
         }
     }
