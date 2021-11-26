@@ -47,7 +47,8 @@ public class Program
         {
             Token = _cfg.Token,
             TokenType = TokenType.Bot,
-            Intents = DiscordIntents.GuildMembers
+            Intents = DiscordIntents.Guilds 
+                      | DiscordIntents.GuildMembers
         });
         client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
         client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
