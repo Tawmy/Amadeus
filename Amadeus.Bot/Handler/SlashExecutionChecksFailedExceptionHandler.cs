@@ -4,26 +4,26 @@ using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.EventArgs;
 
-namespace Amadeus.Bot.Handler.Errors;
+namespace Amadeus.Bot.Handler;
 
-public static class ContextMenuExecutionChecksFailedExceptionHandler
+public static class SlashExecutionChecksFailedExceptionHandler
 {
-    public static async Task HandleException(ContextMenuErrorEventArgs e,
-        ContextMenuExecutionChecksFailedException ex)
+    public static async Task HandleException(SlashCommandErrorEventArgs e,
+        SlashExecutionChecksFailedException ex)
     {
         var check = ex.FailedChecks[0];
 
         switch (check)
         {
-            case ModeratorMenuAttribute attr:
-                var embed = GetModeratorMenuAttributeEmbed(attr);
+            case ModeratorSlashAttribute attr:
+                var embed = GetModeratorSlashAttributeEmbed(attr);
                 await e.Context.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
                     new DiscordInteractionResponseBuilder().AddEmbed(embed));
                 break;
         }
     }
-    
-    private static DiscordEmbed GetModeratorMenuAttributeEmbed(ModeratorMenuAttribute attr)
+
+    private static DiscordEmbed GetModeratorSlashAttributeEmbed(ModeratorSlashAttribute attr)
     {
         var roleName = attr.ModeratorRole?.Name ?? "moderator";
         var embed = new DiscordEmbedBuilder

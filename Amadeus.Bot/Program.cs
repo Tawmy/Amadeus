@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Text.Json;
-using Amadeus.Bot.Handler.Errors;
+using Amadeus.Bot.Events;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
 using Amadeus.Db.Helper;
@@ -54,8 +54,8 @@ public class Program
     {
         var commands = _amadeus.UseSlashCommands();
         commands.RegisterCommands(Assembly.GetExecutingAssembly());
-        commands.SlashCommandErrored += ErrorHandler.CommandsOnSlashCommandErrored;
-        commands.ContextMenuErrored += ErrorHandler.CommandsOnContextMenuErrored;
+        commands.SlashCommandErrored += CommandsOnSlashCommandErroredEvent.CommandsOnSlashCommandErrored;
+        commands.ContextMenuErrored += CommandsOnContextMenuErroredEvent.CommandsOnContextMenuErrored;
     }
 
     private void RegisterInteractivity()

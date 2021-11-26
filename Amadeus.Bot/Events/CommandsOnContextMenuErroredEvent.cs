@@ -1,18 +1,11 @@
+using Amadeus.Bot.Handler;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.EventArgs;
 
-namespace Amadeus.Bot.Handler.Errors;
+namespace Amadeus.Bot.Events;
 
-public static class ErrorHandler
+public class CommandsOnContextMenuErroredEvent
 {
-    public static async Task CommandsOnSlashCommandErrored(SlashCommandsExtension sender, SlashCommandErrorEventArgs e)
-    {
-        if (e.Exception is SlashExecutionChecksFailedException ex)
-        {
-            await SlashExecutionChecksFailedExceptionHandler.HandleException(e, ex);
-        }
-    }
-    
     public static async Task CommandsOnContextMenuErrored(SlashCommandsExtension sender, ContextMenuErrorEventArgs e)
     {
         if (e.Exception is ContextMenuExecutionChecksFailedException ex)
