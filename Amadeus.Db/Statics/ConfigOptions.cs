@@ -9,7 +9,8 @@ public class ConfigOptions : StaticClass<ConfigOption>
     {
         new(1, 1, "Moderator Role", "todo", ConfigType.Role, null, 2),
         new(2, 2, "Verification Role", "todo", ConfigType.Role, null, 2),
-        new(3, 3, "Archive Channel", "todo", ConfigType.Channel, null, 3)
+        new(3, 1, "Moderator Channel", "todo", ConfigType.Channel, null, 3),
+        new(4, 3, "Archive Channel", "todo", ConfigType.Channel, null, 3)
     })
     {
     }

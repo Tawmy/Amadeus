@@ -89,8 +89,9 @@ public static class ConfigHelper
 
     public static async Task<DiscordChannel> GetChannel(string option, DiscordGuild guild)
     {
-        var roleId = Convert.ToUInt64(await GetString(option, guild.Id));
-        return guild.Channels.TryGetValue(roleId, out var result) ? result : null;
+        var channelId = Convert.ToUInt64(await GetString(option, guild.Id));
+        return guild.Channels.TryGetValue(channelId, out var result) ? result : 
+                (await guild.GetChannelsAsync()).FirstOrDefault(x => x.Id == channelId);
     }
 
     public static async Task<bool> Set(string option, ulong guildId, object value)

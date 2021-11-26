@@ -43,11 +43,15 @@ public class Program
 
     private DiscordClient InitAmadeus()
     {
-        return new DiscordClient(new DiscordConfiguration
+        var client = new DiscordClient(new DiscordConfiguration
         {
             Token = _cfg.Token,
-            TokenType = TokenType.Bot
+            TokenType = TokenType.Bot,
+            Intents = DiscordIntents.GuildMembers
         });
+        client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
+        client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
+        return client;
     }
 
     private void RegisterCommands()
