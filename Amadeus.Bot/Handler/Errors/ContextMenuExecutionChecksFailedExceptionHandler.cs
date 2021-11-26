@@ -4,7 +4,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.EventArgs;
 
-namespace Amadeus.Bot.Errors;
+namespace Amadeus.Bot.Handler.Errors;
 
 public static class ContextMenuExecutionChecksFailedExceptionHandler
 {

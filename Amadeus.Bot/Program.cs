@@ -1,11 +1,13 @@
 ﻿using System.Reflection;
 using System.Text.Json;
+using Amadeus.Bot.Handler.Errors;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
 using Amadeus.Db.Helper;
 using DSharpPlus;
+using DSharpPlus.Interactivity;
+using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.SlashCommands;
-using DSharpPlus.SlashCommands.EventArgs;
 
 namespace Amadeus.Bot;
 
@@ -28,6 +30,7 @@ public class Program
             await ConfigHelper.LoadConfigs();
             _amadeus = InitAmadeus();
             RegisterCommands();
+            RegisterInteractivity();
 
             await _amadeus.ConnectAsync();
             var hlp = new StartupHelper(_amadeus, _cfg);
@@ -51,7 +54,15 @@ public class Program
     {
         var commands = _amadeus.UseSlashCommands();
         commands.RegisterCommands(Assembly.GetExecutingAssembly());
-        commands.SlashCommandErrored += Errors.ErrorHandler.CommandsOnSlashCommandErrored;
-        commands.ContextMenuErrored += Errors.ErrorHandler.CommandsOnContextMenuErrored;
+        commands.SlashCommandErrored += ErrorHandler.CommandsOnSlashCommandErrored;
+        commands.ContextMenuErrored += ErrorHandler.CommandsOnContextMenuErrored;
+    }
+
+    private void RegisterInteractivity()
+    {
+        _amadeus.UseInteractivity(new InteractivityConfiguration
+        {
+            Timeout = new TimeSpan(0, 0, 0, 5)
+        });
     }
 }
