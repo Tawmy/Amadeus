@@ -8,7 +8,7 @@ namespace Amadeus.Db.Helper;
 
 public static class ConfigHelper
 {
-    public static async Task LoadConfigs()
+    public static async Task LoadGuildConfigs()
     {
         // load options for default values and getting names
 
