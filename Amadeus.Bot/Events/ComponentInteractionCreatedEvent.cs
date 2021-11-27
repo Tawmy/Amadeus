@@ -10,8 +10,11 @@ public static class ComponentInteractionCreatedEvent
     {
         switch (e.Id)
         {
-            case "selfAssignRoles":
-                await AssignRolesHandler.AssignRoles(sender, e);
+            case "selfAssignButton":
+                await SelfAssignRolesHandler.ShowRoleSelection(sender, e);
+                break;
+            case "selfAssignDropdown":
+                await SelfAssignRolesHandler.AssignRoles(sender, e);
                 break;
         }
     }
