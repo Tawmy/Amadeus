@@ -54,6 +54,7 @@ public class Program
                       | DiscordIntents.GuildMembers
         });
         client.GuildDownloadCompleted += ClientOnGuildDownloadCompleted;
+        client.ComponentInteractionCreated += ComponentInteractionCreatedEvent.ClientOnComponentInteractionCreated;
         client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
         client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
         return client;
