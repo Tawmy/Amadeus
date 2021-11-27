@@ -1,9 +1,9 @@
-﻿using System.Reflection;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Amadeus.Bot.Events;
 using Amadeus.Bot.Helper;
 using Amadeus.Bot.Models;
 using Amadeus.Bot.Modules;
+using Amadeus.Db;
 using Amadeus.Db.Helper;
 using DSharpPlus;
 using DSharpPlus.EventArgs;
@@ -27,25 +27,28 @@ public class Program
     {
         _cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"));
 
-        if (_cfg != null)
+        if (_cfg == null)
         {
-            await ConfigHelper.LoadConfigs();
-            _amadeus = InitAmadeus();
-            RegisterCommands();
-            RegisterInteractivity();
-
-            await _amadeus.ConnectAsync();
-
-            // Block this task until the program is closed.
-            await Task.Delay(-1);
+            throw new InvalidOperationException("Bot cannot run without valid configuration");
         }
+
+        Configuration.ConnectionString = _cfg.DbString;
+        await ConfigHelper.LoadGuildConfigs();
+        _amadeus = InitAmadeus();
+        RegisterCommands();
+        RegisterInteractivity();
+
+        await _amadeus.ConnectAsync();
+
+        // Block this task until the program is closed.
+        await Task.Delay(-1);
     }
 
     private DiscordClient InitAmadeus()
     {
         var client = new DiscordClient(new DiscordConfiguration
         {
-            Token = _cfg.Token,
+            Token = _cfg!.Token,
             TokenType = TokenType.Bot,
             Intents = DiscordIntents.Guilds
                       | DiscordIntents.GuildMembers

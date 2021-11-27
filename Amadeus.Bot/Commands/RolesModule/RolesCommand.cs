@@ -42,6 +42,8 @@ public class RolesCommand
             // break on timeout or when user clicked done button
             await SendRoleMessage(embed, null, "No roles were changed.");
         }
+
+        await SendConfirmationMessage(roles, embed, result);
     }
 
     private async Task<DiscordMessage> SendRoleMessage(DiscordEmbedBuilder embed,

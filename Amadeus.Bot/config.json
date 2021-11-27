@@ -1,4 +1,5 @@
 {
   "Token": "abc123",
+  "DbString": "Host=localhost;Database=amadeus_dev;Username=tawmy",
   "MainChannelId": 640470225329848361
 }
