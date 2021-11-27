@@ -18,7 +18,10 @@ public static class GuildMemberRemovedEvent
         embed.WithColor(DiscordColor.IndianRed);
         embed.WithDescription(
             $"`{e.Member.Id}`{Environment.NewLine}{e.Member.Username}#{e.Member.Discriminator}");
-        embed.WithFooter($"Joined {e.Member.JoinedAt.Humanize()}");
+        if (e.Member.JoinedAt != default)
+        {
+            embed.WithFooter($"Joined {e.Member.JoinedAt.Humanize()}");
+        }
         embed.WithThumbnail(e.Member.AvatarUrl);
         await channel.SendMessageAsync(embed.Build());
     }
