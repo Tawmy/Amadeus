@@ -29,8 +29,9 @@ public static class AnimeCommand
         embed.WithImageUrl(anime.BannerImage);
         embed.WithFooter("AniList", "https://i.imgur.com/zqa6OEk.png");
         embed.WithColor(2010108);
+        var btn = new DiscordLinkButtonComponent(anime.SiteUrl, "View all details on AniList");
 
-        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()));
+        await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()).AddComponents(btn));
     }
 
     private static void AddFields(this DiscordEmbedBuilder embed, Media anime)
