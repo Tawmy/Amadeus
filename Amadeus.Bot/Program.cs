@@ -66,9 +66,11 @@ public class Program
 #if DEBUG
         commands.RegisterCommands<ModerationModule>(640467169733246976);
         commands.RegisterCommands<RolesModule>(640467169733246976);
+        commands.RegisterCommands<AniListModule>(640467169733246976);
 #else
         commands.RegisterCommands<ModerationModule>();
         commands.RegisterCommands<RolesModule>();
+        commands.RegisterCommands<AniListModule>();
 #endif
         commands.RegisterCommands<OwnerModule>(640467169733246976);
         
