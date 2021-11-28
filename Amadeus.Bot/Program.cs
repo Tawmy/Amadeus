@@ -70,6 +70,8 @@ public class Program
         commands.RegisterCommands<ModerationModule>();
         commands.RegisterCommands<RolesModule>();
 #endif
+        commands.RegisterCommands<OwnerModule>(640467169733246976);
+        
         commands.SlashCommandErrored += CommandsOnSlashCommandErroredEvent.CommandsOnSlashCommandErrored;
         commands.ContextMenuErrored += CommandsOnContextMenuErroredEvent.CommandsOnContextMenuErrored;
     }
