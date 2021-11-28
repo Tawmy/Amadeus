@@ -4,7 +4,6 @@ using Anilist4Net.Enums;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Humanizer;
 
 namespace Amadeus.Bot.Commands.AniListModule;
 
@@ -14,7 +13,7 @@ public static class AnimeCommand
     {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
 
-        var anime = await new Anilist4Net.Client().GetMediaBySearch(title, MediaTypes.ANIME);
+        var anime = await new Client().GetMediaBySearch(title, MediaTypes.ANIME);
 
         if (anime == null)
         {
@@ -42,16 +41,17 @@ public static class AnimeCommand
         {
             embed.AddField("Episodes", anime.Episodes.ToString(), true);
         }
+
         embed.AddField("Status", AniListHelper.GetStatusString(anime.Status), true);
-        
+
         // Row 2
         embed.AddField("Average Score", anime.AverageScore != null ? $"{anime.AverageScore}%" : "-", true);
         embed.AddField("Mean Score", anime.MeanScore != null ? $"{anime.MeanScore}%" : "-", true);
 
         // Row 3
         embed.AddField("Genres", string.Join(", ", anime.Genres));
-        
+
         // Row 4
-        embed.AddField("Description", anime.DescriptionMd.StripHtml().Truncate(140));
+        embed.AddField("Description", anime.DescriptionMd.StripHtml().ToDiscordMarkup().TruncateAndCloseSpoiler(140));
     }
 }
