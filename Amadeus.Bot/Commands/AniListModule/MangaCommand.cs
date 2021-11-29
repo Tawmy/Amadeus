@@ -13,11 +13,15 @@ public static class MangaCommand
     {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
 
-        var manga = await new Client().GetMediaBySearch(title, MediaTypes.MANGA);
-        
-        if (manga == null)
+        var manga = int.TryParse(title, out var result)
+            ? await new Client().GetMediaById(result)
+            : await new Client().GetMediaBySearch(title, MediaTypes.MANGA);
+
+        if (manga == null ||
+            !new[] {MediaFormats.MANGA, MediaFormats.NOVEL, MediaFormats.ONE_SHOT}.Contains(manga.Format))
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Manga \"{title}\" not found"));
+            return;
         }
 
         var embed = new DiscordEmbedBuilder();
