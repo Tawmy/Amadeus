@@ -27,10 +27,7 @@ public class Program
     {
         _cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"));
 
-        if (_cfg == null)
-        {
-            throw new InvalidOperationException("Bot cannot run without valid configuration");
-        }
+        if (_cfg == null) throw new InvalidOperationException("Bot cannot run without valid configuration");
 
         Configuration.ConnectionString = _cfg.DbString;
         await ConfigHelper.LoadGuildConfigs();
@@ -64,14 +61,16 @@ public class Program
     {
         var commands = _amadeus.UseSlashCommands();
 #if DEBUG
+        commands.RegisterCommands<ConfigurationModule>(640467169733246976);
         commands.RegisterCommands<ModerationModule>(640467169733246976);
         commands.RegisterCommands<RolesModule>(640467169733246976);
 #else
+        commands.RegisterCommands<ConfigurationModule>();
         commands.RegisterCommands<ModerationModule>();
         commands.RegisterCommands<RolesModule>();
 #endif
         commands.RegisterCommands<OwnerModule>(640467169733246976);
-        
+
         commands.SlashCommandErrored += CommandsOnSlashCommandErroredEvent.CommandsOnSlashCommandErrored;
         commands.ContextMenuErrored += CommandsOnContextMenuErroredEvent.CommandsOnContextMenuErrored;
     }

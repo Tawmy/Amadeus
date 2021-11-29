@@ -93,10 +93,20 @@ public static class ConfigHelper
         return guild.Channels.TryGetValue(channelId, out var result) ? result : null;
     }
 
+    public static async Task<bool> Set(int optionId, ulong guildId, object value)
+    {
+        var opt = new ConfigOptions().Get(optionId);
+        return await SetInternal(opt, guildId, value);
+    }
+
     public static async Task<bool> Set(string option, ulong guildId, object value)
     {
         var opt = new ConfigOptions().Get(option);
+        return await SetInternal(opt, guildId, value);
+    }
 
+    private static async Task<bool> SetInternal(ConfigOption opt, ulong guildId, object value)
+    {
         string valueStr;
         switch (opt.Type)
         {
@@ -113,6 +123,12 @@ public static class ConfigHelper
             case ConfigType.Role when value is ulong:
             case ConfigType.Channel when value is ulong:
                 valueStr = value.ToString();
+                break;
+            case ConfigType.Role when value is DiscordRole role:
+                valueStr = role.Id.ToString();
+                break;
+            case ConfigType.Channel when value is DiscordChannel channel:
+                valueStr = channel.Id.ToString();
                 break;
             default:
                 return false;
