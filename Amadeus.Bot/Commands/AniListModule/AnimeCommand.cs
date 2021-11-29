@@ -21,37 +21,19 @@ public static class AnimeCommand
         }
 
         var embed = new DiscordEmbedBuilder();
-        embed.WithTitle(anime!.EnglishTitle ?? anime.RomajiTitle ?? anime.NativeTitle);
-        embed.WithDescription($"{anime.RomajiTitle}{Environment.NewLine}{anime.NativeTitle}");
-        embed.AddFields(anime);
-        embed.WithThumbnail(anime.CoverImageExtraLarge);
-        embed.WithImageUrl(anime.BannerImage);
-        embed.WithFooter("AniList", "https://i.imgur.com/zqa6OEk.png");
-        embed.WithColor(2010108);
-        var btn = new DiscordLinkButtonComponent(anime.SiteUrl, "View all details on AniList");
-
+        embed.AddCommonMediaFieldsTop(anime!);
+        embed.AddFields(anime!);
+        embed.AddCommonMediaFieldsBottom(anime!);
+        embed.AddCommonMediaEmbedProperties(anime!);
+        var btn = anime!.GetSiteButton();
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()).AddComponents(btn));
     }
 
     private static void AddFields(this DiscordEmbedBuilder embed, Media anime)
     {
-        // Row 1
-        embed.AddField("Released", $"{anime.AiringStartDate:MMM yyyy}", true);
         if (anime.Episodes > 1)
         {
             embed.AddField("Episodes", anime.Episodes.ToString(), true);
         }
-
-        embed.AddField("Status", AniListHelper.GetStatusString(anime.Status), true);
-
-        // Row 2
-        embed.AddField("Average Score", anime.AverageScore != null ? $"{anime.AverageScore}%" : "-", true);
-        embed.AddField("Mean Score", anime.MeanScore != null ? $"{anime.MeanScore}%" : "-", true);
-
-        // Row 3
-        embed.AddField("Genres", string.Join(", ", anime.Genres));
-
-        // Row 4
-        embed.AddField("Description", anime.DescriptionMd.StripHtml().ToDiscordMarkup().TruncateAndCloseSpoiler(140));
     }
 }
