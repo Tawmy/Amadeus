@@ -25,7 +25,7 @@ public static class SelfAssignRolesHandler
 
         var embed = new DiscordEmbedBuilder();
         embed.WithTitle("Self-assignable Roles");
-        embed.WithDescription("Assign to or remove roles from yourself here.");
+        embed.WithDescription("Select roles to add to yourself here. Unselecting will remove them again.");
         await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
                 .AddEmbed(embed.Build())
                 .AddComponents(dropdown)
