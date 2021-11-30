@@ -4,7 +4,6 @@ using Anilist4Net.Enums;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
-using Humanizer;
 
 namespace Amadeus.Bot.Commands.AniListModule;
 
@@ -30,11 +29,11 @@ public static class AnimeCommand
         }
 
         var embed = new DiscordEmbedBuilder();
-        embed.AddCommonMediaFieldsTop(anime!);
-        embed.AddFields(anime!);
-        embed.AddCommonMediaFieldsBottom(anime!);
-        embed.AddCommonMediaEmbedProperties(anime!);
-        var btn = anime!.GetSiteButton();
+        AniListHelper.AddCommonMediaFieldsTop(embed, anime);
+        embed.AddFields(anime);
+        AniListHelper.AddCommonMediaFieldsBottom(embed, anime);
+        AniListHelper.AddCommonMediaEmbedProperties(embed, anime);
+        var btn = AniListHelper.GetSiteButton(anime);
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()).AddComponents(btn));
     }
 

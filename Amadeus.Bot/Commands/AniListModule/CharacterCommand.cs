@@ -1,4 +1,4 @@
-using Amadeus.Bot.Helper;
+using Amadeus.Bot.Extensions;
 using Anilist4Net;
 using DSharpPlus;
 using DSharpPlus.Entities;

@@ -25,11 +25,11 @@ public static class MangaCommand
         }
 
         var embed = new DiscordEmbedBuilder();
-        embed.AddCommonMediaFieldsTop(manga!);
+        AniListHelper.AddCommonMediaFieldsTop(embed, manga);
         embed.AddFields(manga!);
-        embed.AddCommonMediaFieldsBottom(manga!);
-        embed.AddCommonMediaEmbedProperties(manga!);
-        var btn = manga!.GetSiteButton();
+        AniListHelper.AddCommonMediaFieldsBottom(embed, manga);
+        AniListHelper.AddCommonMediaEmbedProperties(embed, manga);
+        var btn = AniListHelper.GetSiteButton(manga);
         await ctx.EditResponseAsync(new DiscordWebhookBuilder().AddEmbed(embed.Build()).AddComponents(btn));
     }
 
