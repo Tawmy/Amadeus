@@ -1,4 +1,4 @@
-using Amadeus.Bot.Helper;
+using Amadeus.Bot.Extensions;
 using Amadeus.Bot.Resources;
 using Amadeus.Db.Helper;
 using DSharpPlus;
@@ -100,7 +100,7 @@ public class ArchiveCommand
         // Post file and detailed embed in log channel
         var embed = GetEmbed(msgs.Count, msgs.Select(x => x.Author).Distinct().ToList());
         var filename = $"{_channel.Name}_{DateTime.Now:yy-MM-dd-HH-mm}.html";
-        await using var stream = StreamHelper.GenerateStreamFromString(SiteStr);
+        await using var stream = SiteStr.GenerateStream();
         var msg = new DiscordMessageBuilder().WithEmbed(embed).WithFile(filename, stream);
         await logChannel.SendMessageAsync(msg);
     }
