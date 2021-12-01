@@ -15,12 +15,24 @@ public static class SelfAssignRolesHandler
         {
             return; // todo handle this better
         }
+        
+        // TODO replace with proper check later
+        var verRole = await ConfigHelper.GetRole("Verification Role", e.Guild);
+        if (verRole == null || !member.Roles.Contains(verRole))
+        {
+            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
+                .WithContent("You need to be verified to use this function.")
+                .AsEphemeral(true));
+            return;
+        }
 
         var dropdown = await GetDropdown(e.Guild, member);
         if (dropdown == null)
         {
-            await e.Interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
-                new DiscordInteractionResponseBuilder().WithContent("Failed to get list of self-assignable roles."));
+            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
+                .WithContent("Failed to get list of self-assignable roles.")
+                .AsEphemeral(true));
+            return;
         }
 
         var embed = new DiscordEmbedBuilder();
