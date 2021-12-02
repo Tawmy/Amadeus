@@ -4,11 +4,11 @@ namespace Amadeus.Bot.Extensions;
 
 public static class StringExtensions
 {
-    public static string StripHtml (this string input)
+    public static string StripHtml(this string input)
     {
         return Regex.Replace(input, "<[a-zA-Z/].*?>", string.Empty);
     }
-    
+
     public static Stream GenerateStream(this string s)
     {
         var stream = new MemoryStream();

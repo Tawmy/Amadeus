@@ -1,0 +1,15 @@
+namespace Amadeus.Db.Models;
+
+public class SelfAssignMenu
+{
+    public int Id { get; set; }
+
+    public string Title { get; set; } = null!;
+    public string? Description { get; set; }
+
+    public ulong? RequiredRoleId { get; set; }
+    public DiscordEntity? RequiredRole { get; set; }
+
+    public ICollection<SelfAssignMenuDiscordEntityAssignment> SelfAssignMenuDiscordEntityAssignments { get; set; } =
+        null!;
+}

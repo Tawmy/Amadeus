@@ -26,7 +26,7 @@ public static class MangaCommand
 
         var embed = new DiscordEmbedBuilder();
         AniListHelper.AddCommonMediaFieldsTop(embed, manga);
-        embed.AddFields(manga!);
+        embed.AddFields(manga);
         AniListHelper.AddCommonMediaFieldsBottom(embed, manga);
         AniListHelper.AddCommonMediaEmbedProperties(embed, manga);
         var btn = AniListHelper.GetSiteButton(manga);
@@ -35,14 +35,8 @@ public static class MangaCommand
 
     private static void AddFields(this DiscordEmbedBuilder embed, Media media)
     {
-        if (media.Volumes > 0)
-        {
-            embed.AddField("Volumes", media.Volumes.ToString(), true);
-        }
+        if (media.Volumes > 0) embed.AddField("Volumes", media.Volumes.ToString(), true);
 
-        if (media.Chapters > 0)
-        {
-            embed.AddField("Chapters", media.Chapters.ToString(), true);
-        }
+        if (media.Chapters > 0) embed.AddField("Chapters", media.Chapters.ToString(), true);
     }
 }

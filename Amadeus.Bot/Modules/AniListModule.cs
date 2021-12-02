@@ -16,7 +16,7 @@ public class AniListModule : ApplicationCommandModule
     {
         await AnimeCommand.RunSlash(ctx, title);
     }
-    
+
     [SlashCommand("manga", "Shows information for the given manga.")]
     [SlashRequireBotPermissions(Permissions.SendMessages | Permissions.EmbedLinks)]
     public async Task SlashManga(InteractionContext ctx,
@@ -25,7 +25,7 @@ public class AniListModule : ApplicationCommandModule
     {
         await MangaCommand.RunSlash(ctx, title);
     }
-    
+
     [SlashCommand("character", "Shows information for the given character.")]
     [SlashRequireBotPermissions(Permissions.SendMessages | Permissions.EmbedLinks)]
     public async Task SlashCharacter(InteractionContext ctx,

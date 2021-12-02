@@ -1,6 +1,8 @@
+using Amadeus.Db.Enums;
 using Amadeus.Db.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Npgsql;
 
 namespace Amadeus.Db;
 
@@ -9,11 +11,13 @@ public class AmadeusContext : DbContext
     // constructor for API
     public AmadeusContext(DbContextOptions<AmadeusContext> options) : base(options)
     {
+        MapEnums();
     }
 
     // constructor for EntityRepository
     public AmadeusContext()
     {
+        MapEnums();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,11 +27,21 @@ public class AmadeusContext : DbContext
         base.OnConfiguring(optionsBuilder);
     }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.HasPostgresEnum<DiscordEntityType>();
+    }
+
+    private static void MapEnums()
+    {
+        NpgsqlConnection.GlobalTypeMapper.MapEnum<DiscordEntityType>();
+    }
+
     #region DbSets
 
-    public DbSet<AssignableRole> AssignableRoles { get; set; }
-    public DbSet<Config> Configs { get; set; }
-    public DbSet<Guild> Guilds { get; set; }
+    public DbSet<DiscordEntity> DiscordEntities => Set<DiscordEntity>();
+    public DbSet<Config> Configs => Set<Config>();
+    public DbSet<Guild> Guilds => Set<Guild>();
 
     #endregion
 }

@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Amadeus.Db.Mapping;
 
-public class AssignableRoleMapping : IEntityTypeConfiguration<AssignableRole>
+public class DiscordEntityMapping : IEntityTypeConfiguration<DiscordEntity>
 {
-    public void Configure(EntityTypeBuilder<AssignableRole> b)
+    public void Configure(EntityTypeBuilder<DiscordEntity> b)
     {
         b.HasKey(x => x.Id);
         b.Property(x => x.Id).ValueGeneratedNever();
-        
+
         b.HasOne(x => x.Guild)
-            .WithMany(y => y.AssignableRoles)
+            .WithMany(y => y.DiscordEntities)
             .HasForeignKey(x => x.GuildId)
             .OnDelete(DeleteBehavior.Cascade);
     }

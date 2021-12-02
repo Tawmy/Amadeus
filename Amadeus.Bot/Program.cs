@@ -15,8 +15,8 @@ namespace Amadeus.Bot;
 
 public class Program
 {
-    private DiscordClient _amadeus;
-    private AmadeusConfig _cfg;
+    private DiscordClient _amadeus = null!;
+    private AmadeusConfig _cfg = null!;
 
     public static void Main(string[] args)
     {
@@ -25,7 +25,7 @@ public class Program
 
     private async Task MainAsync()
     {
-        _cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"));
+        _cfg = JsonSerializer.Deserialize<AmadeusConfig>(await File.ReadAllTextAsync("config.json"))!;
 
         if (_cfg == null) throw new InvalidOperationException("Bot cannot run without valid configuration");
 
@@ -45,7 +45,7 @@ public class Program
     {
         var client = new DiscordClient(new DiscordConfiguration
         {
-            Token = _cfg!.Token,
+            Token = _cfg.Token,
             TokenType = TokenType.Bot,
             Intents = DiscordIntents.Guilds
                       | DiscordIntents.GuildMembers

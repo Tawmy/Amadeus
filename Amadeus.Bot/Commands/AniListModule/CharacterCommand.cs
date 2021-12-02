@@ -17,17 +17,15 @@ public static class CharacterCommand
         if (character == null)
         {
             await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Character \"{name}\" not found"));
+            return;
         }
 
         var embed = new DiscordEmbedBuilder();
-        embed.WithTitle(character!.FullName);
+        embed.WithTitle(character.FullName);
         embed.WithDescription(character.NativeName);
 
         var altNames = string.Join(", ", character.AlternativeNames);
-        if (altNames.Length > 0)
-        {
-            embed.AddField("Alternative Names", altNames);
-        }
+        if (altNames.Length > 0) embed.AddField("Alternative Names", altNames);
 
         embed.AddField("Description",
             character.DescriptionMd.StripHtml().ToDiscordMarkup().TruncateAndCloseSpoiler(210));

@@ -9,8 +9,6 @@ public class CommandsOnContextMenuErroredEvent
     public static async Task CommandsOnContextMenuErrored(SlashCommandsExtension sender, ContextMenuErrorEventArgs e)
     {
         if (e.Exception is ContextMenuExecutionChecksFailedException ex)
-        {
             await ContextMenuExecutionChecksFailedExceptionHandler.HandleException(e, ex);
-        }
     }
 }

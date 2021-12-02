@@ -10,13 +10,10 @@ public static class RolesMsgCommand
         DiscordChannel? channel)
     {
         await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-        
+
         var embed = new DiscordEmbedBuilder();
         embed.WithTitle(title);
-        if (description != null)
-        {
-            embed.WithDescription(description);
-        }
+        if (description != null) embed.WithDescription(description);
 
         var btn = new DiscordButtonComponent(ButtonStyle.Primary, "selfAssignButton", "Show roles");
 

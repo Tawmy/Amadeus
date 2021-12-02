@@ -6,7 +6,8 @@ namespace Amadeus.Bot.Events;
 
 public static class ComponentInteractionCreatedEvent
 {
-    public static async Task ClientOnComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    public static async Task ClientOnComponentInteractionCreated(DiscordClient sender,
+        ComponentInteractionCreateEventArgs e)
     {
         switch (e.Id)
         {

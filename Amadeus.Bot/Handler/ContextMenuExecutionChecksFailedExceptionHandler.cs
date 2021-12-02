@@ -22,7 +22,7 @@ public static class ContextMenuExecutionChecksFailedExceptionHandler
                 break;
         }
     }
-    
+
     private static DiscordEmbed GetModeratorMenuAttributeEmbed(ModeratorMenuAttribute attr)
     {
         var roleName = attr.ModeratorRole?.Name ?? "moderator";
@@ -33,10 +33,8 @@ public static class ContextMenuExecutionChecksFailedExceptionHandler
         };
         embed.WithColor(DiscordColor.IndianRed);
         if (attr.Ctx != null)
-        {
             embed.WithAuthor(attr.Ctx.Member.Nickname ?? attr.Ctx.Member.Username ?? attr.Ctx.User.Username,
                 iconUrl: attr.Ctx.Member.AvatarUrl ?? attr.Ctx.User.AvatarUrl);
-        }
         return embed.Build();
     }
 }

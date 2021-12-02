@@ -7,11 +7,11 @@ namespace Amadeus.Bot.Commands.ConfigurationModule;
 
 public class SetupCommand
 {
-    private readonly InteractionContext _ctx;
-    private readonly DiscordRole _moderatorRole;
-    private readonly DiscordChannel _moderatorChannel;
-    private readonly DiscordChannel _logChannel;
     private readonly DiscordChannel _archiveChannel;
+    private readonly InteractionContext _ctx;
+    private readonly DiscordChannel _logChannel;
+    private readonly DiscordChannel _moderatorChannel;
+    private readonly DiscordRole _moderatorRole;
 
 
     public SetupCommand(InteractionContext ctx,
@@ -28,22 +28,25 @@ public class SetupCommand
     public async Task RunSlash()
     {
         await _ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource);
-        
+
         if (await ConfigHelper.Set(1, _ctx.Guild.Id, _moderatorRole) == false)
         {
             await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to set moderator role."));
             return;
         }
+
         if (await ConfigHelper.Set(2, _ctx.Guild.Id, _moderatorChannel) == false)
         {
             await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to set moderator channel."));
             return;
         }
+
         if (await ConfigHelper.Set(3, _ctx.Guild.Id, _logChannel) == false)
         {
             await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to set log channel."));
             return;
         }
+
         if (await ConfigHelper.Set(4, _ctx.Guild.Id, _archiveChannel) == false)
         {
             await _ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Failed to set archive channel."));

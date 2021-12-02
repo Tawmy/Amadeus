@@ -20,11 +20,11 @@ public class ConfigOptions : StaticClass<ConfigOption>
 public class ConfigOption : StaticField
 {
     public readonly int ConfigOptionCategoryId;
-    public readonly string DefaultValue;
+    public readonly string? DefaultValue;
     public readonly string Description;
     public readonly ConfigType Type;
 
-    public ConfigOption(int i, int s, string n, string d, ConfigType t, string df, int ci) : base(i, s, n)
+    public ConfigOption(int i, int s, string n, string d, ConfigType t, string? df, int ci) : base(i, s, n)
     {
         Description = d;
         Type = t;

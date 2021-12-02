@@ -14,12 +14,13 @@ public static class AniListExtensions
 
     public static string TruncateAndCloseSpoiler(this string input, int maxLength)
     {
-        return input.Length <= maxLength ?
-            input : Regex.Matches(input[..maxLength], "\\|\\|").Count % 2 != 0
+        return input.Length <= maxLength
+            ? input
+            : Regex.Matches(input[..maxLength], "\\|\\|").Count % 2 != 0
                 ? $"{input[..maxLength]}||…"
                 : $"{input[..maxLength]}…";
     }
-    
+
     public static string ToFriendlyString(this MediaStatuses status)
     {
         return status switch

@@ -11,7 +11,7 @@ public class Config
     [NotMapped] ConfigOption ConfigOption => new ConfigOptions().Get(ConfigOptionId);
 
     public ulong GuildId { get; set; }
-    public Guild Guild { get; set; }
+    public Guild Guild { get; set; } = null!;
 
-    public string Value { get; set; }
+    public string Value { get; set; } = null!;
 }

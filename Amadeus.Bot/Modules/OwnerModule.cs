@@ -13,6 +13,7 @@ public class OwnerModule : ApplicationCommandModule
     public async Task SlashReloadConfigs(InteractionContext ctx)
     {
         await ConfigHelper.LoadGuildConfigs();
-        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Guild configs reloaded"));
+        await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource,
+            new DiscordInteractionResponseBuilder().WithContent("Guild configs reloaded"));
     }
 }

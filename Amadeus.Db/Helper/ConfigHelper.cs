@@ -20,12 +20,12 @@ public static class ConfigHelper
         Configuration.GuildConfigs = dicts;
     }
 
-    public static async Task<string> GetString(string option, ulong? guildId = null)
+    public static async Task<string?> GetString(string option, ulong? guildId = null)
     {
         var defaultOption = new ConfigOptions().Get(option);
 
         // when no guildId provided, return default value
-        if (guildId == null) return defaultOption?.DefaultValue;
+        if (guildId == null) return defaultOption.DefaultValue;
 
         // check if guild in dictionary
         // if so, get config for that specific option
@@ -37,59 +37,61 @@ public static class ConfigHelper
 
         // if no config set, get default value, set for guild, and return
         // this avoids user confusion if default bot behaviour is ever changed
-        await Set(option, guildId.Value, defaultOption.DefaultValue);
+        await Set(option, guildId.Value,
+            defaultOption.DefaultValue ??
+            throw new InvalidOperationException("Default option not found, cannot set default value"));
         return defaultOption.DefaultValue;
     }
 
-    public static async Task<char> GetChar(string option, ulong guildId)
+    public static async Task<char?> GetChar(string option, ulong guildId)
     {
-        return (await GetString(option, guildId))[0];
+        return await GetString(option, guildId) is { } s ? s[0] : null;
     }
 
-    public static async Task<char> GetChar(string option)
+    public static async Task<char?> GetChar(string option)
     {
-        return (await GetString(option))[0];
+        return await GetString(option) is { } s ? s[0] : null;
     }
 
-    public static async Task<int> GetInt(string option, ulong guildId)
+    public static async Task<int?> GetInt(string option, ulong guildId)
     {
-        return Convert.ToInt32(await GetString(option, guildId));
+        return await GetString(option, guildId) is { } s ? Convert.ToInt32(s) : null;
     }
 
-    public static async Task<int> GetInt(string option)
+    public static async Task<int?> GetInt(string option)
     {
-        return Convert.ToInt32(await GetString(option));
+        return await GetString(option) is { } s ? Convert.ToInt32(s) : null;
     }
 
-    public static async Task<bool> GetBool(string option, ulong guildId)
+    public static async Task<bool?> GetBool(string option, ulong guildId)
     {
-        return (await GetString(option, guildId)).Equals("1");
+        return await GetString(option, guildId) is { } s ? s.Equals("1") : null;
     }
 
-    public static async Task<bool> GetBool(string option)
+    public static async Task<bool?> GetBool(string option)
     {
-        return (await GetString(option)).Equals("1");
+        return await GetString(option) is { } s ? s.Equals("1") : null;
     }
 
-    public static async Task<ulong> GetUlong(string option, ulong guildId)
+    public static async Task<ulong?> GetUlong(string option, ulong guildId)
     {
-        return Convert.ToUInt64(await GetString(option, guildId));
+        return await GetString(option, guildId) is { } s ? Convert.ToUInt64(s) : null;
     }
 
-    public static async Task<ulong> GetUlong(string option)
+    public static async Task<ulong?> GetUlong(string option)
     {
-        return Convert.ToUInt64(await GetString(option));
+        return await GetString(option) is { } s ? Convert.ToUInt64(s) : null;
     }
 
-    public static async Task<DiscordRole> GetRole(string option, DiscordGuild guild)
+    public static async Task<DiscordRole?> GetRole(string option, DiscordGuild guild)
     {
-        var roleId = Convert.ToUInt64(await GetString(option, guild.Id));
+        var roleId = await GetString(option, guild.Id) is { } s ? Convert.ToUInt64(s) : default;
         return guild.Roles.TryGetValue(roleId, out var result) ? result : null;
     }
 
-    public static async Task<DiscordChannel> GetChannel(string option, DiscordGuild guild)
+    public static async Task<DiscordChannel?> GetChannel(string option, DiscordGuild guild)
     {
-        var channelId = Convert.ToUInt64(await GetString(option, guild.Id));
+        var channelId = await GetString(option, guild.Id) is { } s ? Convert.ToUInt64(s) : default;
         return guild.Channels.TryGetValue(channelId, out var result) ? result : null;
     }
 
@@ -115,14 +117,14 @@ public static class ConfigHelper
                 break;
             case ConfigType.Int when value is int:
             case ConfigType.Char when value is char:
-                valueStr = value.ToString();
+                valueStr = value.ToString()!;
                 break;
             case ConfigType.String when value is string s:
                 valueStr = s;
                 break;
             case ConfigType.Role when value is ulong:
             case ConfigType.Channel when value is ulong:
-                valueStr = value.ToString();
+                valueStr = value.ToString()!;
                 break;
             case ConfigType.Role when value is DiscordRole role:
                 valueStr = role.Id.ToString();

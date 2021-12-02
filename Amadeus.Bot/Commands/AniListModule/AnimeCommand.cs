@@ -39,10 +39,7 @@ public static class AnimeCommand
 
     private static void AddFields(this DiscordEmbedBuilder embed, Media anime)
     {
-        if (anime.Episodes > 1)
-        {
-            embed.AddField("Episodes", anime.Episodes.ToString(), true);
-        }
+        if (anime.Episodes > 1) embed.AddField("Episodes", anime.Episodes.ToString(), true);
 
         if (anime.Format != MediaFormats.MOVIE || anime.Duration == null) return;
 

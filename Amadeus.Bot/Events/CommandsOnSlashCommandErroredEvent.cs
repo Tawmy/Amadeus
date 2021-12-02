@@ -9,8 +9,6 @@ public class CommandsOnSlashCommandErroredEvent
     public static async Task CommandsOnSlashCommandErrored(SlashCommandsExtension sender, SlashCommandErrorEventArgs e)
     {
         if (e.Exception is SlashExecutionChecksFailedException ex)
-        {
             await SlashExecutionChecksFailedExceptionHandler.HandleException(e, ex);
-        }
     }
 }

@@ -7,7 +7,7 @@ using DSharpPlus.SlashCommands.Attributes;
 
 namespace Amadeus.Bot.Modules;
 
-public class RolesModule: ApplicationCommandModule
+public class RolesModule : ApplicationCommandModule
 {
     [SlashCommand("rolesMsg", "Sends message with button for self-assigning roles.")]
     [ModeratorSlash]

@@ -30,7 +30,7 @@ public static class ArchiveParts
         return $@"<li><a href=""https://discordapp.com/users/{u.Id}"">
                     {u.Username} (ID: {u.Id})</a></li>{Environment.NewLine}";
     }
-    
+
     public static string GetMessageHtmlString(DiscordMessage m)
     {
         return $@"<div class=""message"">
@@ -38,7 +38,7 @@ public static class ArchiveParts
                 <span class=""message_author"">{m.Author.Username}</span>
                 <span class=""message_text"">{m.Content}</span></div>";
     }
-    
+
     public static string GetBridgeHtmlString()
     {
         return "</ul></div></header><section>";

@@ -8,11 +8,11 @@ public class ModeratorSlashAttribute : SlashCheckBaseAttribute
 {
     public InteractionContext? Ctx;
     public DiscordRole? ModeratorRole;
-    
+
     public override async Task<bool> ExecuteChecksAsync(InteractionContext ctx)
     {
         Ctx = ctx;
-        
+
         if (ctx.Guild == null) return true;
         if (ctx.Member == null) return false;
 
@@ -25,10 +25,11 @@ public class ModeratorMenuAttribute : ContextMenuCheckBaseAttribute
 {
     public ContextMenuContext? Ctx;
     public DiscordRole? ModeratorRole;
+
     public override async Task<bool> ExecuteChecksAsync(ContextMenuContext ctx)
     {
         Ctx = ctx;
-        
+
         if (ctx.Guild == null) return true;
         if (ctx.Member == null) return false;
 

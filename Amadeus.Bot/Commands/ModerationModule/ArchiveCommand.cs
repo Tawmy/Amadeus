@@ -10,9 +10,8 @@ namespace Amadeus.Bot.Commands.ModerationModule;
 
 public class ArchiveCommand
 {
-    private string SiteStr { get; set; }
-    private readonly InteractionContext _ctx;
     private readonly DiscordChannel _channel;
+    private readonly InteractionContext _ctx;
     private readonly int _maxMsgs;
 
     public ArchiveCommand(InteractionContext ctx, DiscordChannel channel, long maxMsgs)
@@ -22,6 +21,8 @@ public class ArchiveCommand
         _maxMsgs = Convert.ToInt32(maxMsgs > 1000 ? 1000 : maxMsgs);
         SiteStr = ArchiveParts.GetHeaderAndBodyPartOne(_channel);
     }
+
+    private string SiteStr { get; set; }
 
     public async Task RunSlash()
     {
