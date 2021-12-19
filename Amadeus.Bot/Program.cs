@@ -49,11 +49,13 @@ public class Program
             TokenType = TokenType.Bot,
             Intents = DiscordIntents.Guilds
                       | DiscordIntents.GuildMembers
+                      | DiscordIntents.GuildMessages
         });
         client.GuildDownloadCompleted += ClientOnGuildDownloadCompleted;
         client.ComponentInteractionCreated += ComponentInteractionCreatedEvent.ClientOnComponentInteractionCreated;
         client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
         client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
+        client.MessageDeleted += OnMessageDeleted.ClientOnMessageDeleted;
         return client;
     }
 
