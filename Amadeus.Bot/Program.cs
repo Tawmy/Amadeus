@@ -56,6 +56,7 @@ public class Program
         client.GuildMemberAdded += GuildMemberAddedEvent.ClientOnGuildMemberAdded;
         client.GuildMemberRemoved += GuildMemberRemovedEvent.ClientOnGuildMemberRemoved;
         client.MessageDeleted += OnMessageDeleted.ClientOnMessageDeleted;
+        client.MessageUpdated += OnMessageUpdated.AmadeusOnMessageUpdated;
         return client;
     }
 
