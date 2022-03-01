@@ -1,75 +1,91 @@
-using Amadeus.Db.Helper;
+using Amadeus.Db;
+using Amadeus.Db.Models;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Amadeus.Bot.Handler;
 
 public static class SelfAssignRolesHandler
 {
-    public static async Task ShowRoleSelection(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    public static async Task ShowRoleSelection(DiscordClient sender, ComponentInteractionCreateEventArgs e,
+        int selfAssignMenuId)
     {
         await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
 
-        if (e.User is not DiscordMember member) return; // todo handle this better
+        if (e.User is not DiscordMember member) return;
 
-        // TODO replace with proper check later
-        var verRole = await ConfigHelper.GetRole("Verification Role", e.Guild);
-        if (verRole == null || !member.Roles.Contains(verRole))
+        var menu = await GetSelfAssignMenuById(selfAssignMenuId);
+        if (menu.GuildId != member.Guild.Id) return; // Give out warning?
+
+        // if menu has a required role, check and give out warning if user is missing it
+        if (menu.RequiredRoleId != null && !member.Roles.Select(x => x.Id).Contains(menu.RequiredRoleId.Value))
         {
+            var reqRole = e.Guild.Roles.First(x => x.Key == menu.RequiredRoleId).Value;
             await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
-                .WithContent("You need to be verified to use this function.")
+                .WithContent($"You need the {reqRole.Name} role to use this function.")
                 .AsEphemeral(true));
-            return;
         }
 
-        var dropdown = await GetDropdown(e.Guild, member);
-        if (dropdown == null)
-        {
-            await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
-                .WithContent("Failed to get list of self-assignable roles.")
-                .AsEphemeral(true));
-            return;
-        }
-
+        var menuComponent = GetMenuComponent(e.Guild, member, menu);
+        
         var embed = new DiscordEmbedBuilder();
-        embed.WithTitle("Self-assignable Roles");
-        embed.WithDescription("Select roles to add to yourself here. Unselecting will remove them again.");
+        embed.WithTitle(menu.Title);
+        embed.WithDescription(menu.Description);
         await e.Interaction.CreateFollowupMessageAsync(new DiscordFollowupMessageBuilder()
             .AddEmbed(embed.Build())
-            .AddComponents(dropdown)
+            .AddComponents(menuComponent)
             .AsEphemeral(true));
     }
 
-    public static async Task AssignRoles(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+    public static async Task AssignRoles(DiscordClient sender, ComponentInteractionCreateEventArgs e,
+        int selfAssignMenuId)
     {
         await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
 
-        var assignableRoles = await RolesHelper.GetSelfAssignableRoles(e.Guild);
+        var menu = await GetSelfAssignMenuById(selfAssignMenuId);
+        if (menu.GuildId != e.Guild.Id) return; // Give out warning?
+
         var member = await e.Guild.GetMemberAsync(e.User.Id);
-        if (assignableRoles is null || member == null) return; // TODO handle this error?
+        if (member == null) return; // TODO handle this error?
 
         var memberRoles = member.Roles.ToList();
+        var menuRoles = e.Guild.Roles.Where(x =>
+                menu.SelfAssignMenuDiscordEntityAssignments.Select(y => y.DiscordEntityId).Contains(x.Value.Id))
+            .Select(x => x.Value).ToList();
 
         // Add newly selected roles
-        foreach (var newRole in assignableRoles.Where(x =>
+        foreach (var newRole in menuRoles.Where(x =>
                      e.Values.Contains(x.Id.ToString()) &&
                      !memberRoles.Select(y => y.Id).Contains(x.Id)))
             await member.GrantRoleAsync(newRole);
 
         // Remove unselected roles
-        foreach (var revRole in assignableRoles.Where(x =>
+        foreach (var revRole in menuRoles.Where(x =>
                      !e.Values.Contains(x.Id.ToString()) &&
                      memberRoles.Select(y => y.Id).Contains(x.Id)))
             await member.RevokeRoleAsync(revRole);
     }
 
-    private static async Task<DiscordSelectComponent?> GetDropdown(DiscordGuild guild, DiscordMember member)
+    private static DiscordSelectComponent GetMenuComponent(DiscordGuild guild, DiscordMember member,
+        SelfAssignMenu menu)
     {
-        var roles = await RolesHelper.GetSelfAssignableRoles(guild);
+        var roles = guild.Roles.Values.Where(x =>
+            menu.SelfAssignMenuDiscordEntityAssignments.Select(y => y.DiscordEntityId).Contains(x.Id)).ToList();
         var options = roles.Select(x => new DiscordSelectComponentOption(x.Name, x.Id.ToString(),
             isDefault: member.Roles.Any(y => y.Id == x.Id))).ToList();
-        return new DiscordSelectComponent("selfAssignDropdown", "Select role(s)",
+        return new DiscordSelectComponent($"selfAssignDropdown_{menu.Id}", "Select role(s)",
             options, minOptions: 0, maxOptions: options.Count);
+    }
+
+    private static async Task<SelfAssignMenu> GetSelfAssignMenuById(int selfAssignMenuId)
+    {
+        var context = new AmadeusContext();
+        return await context.SelfAssignMenus.Where(x =>
+                x.Id == selfAssignMenuId)
+            .Include(x => x.RequiredRole)
+            .Include(x => x.SelfAssignMenuDiscordEntityAssignments)
+            .FirstAsync();
     }
 }

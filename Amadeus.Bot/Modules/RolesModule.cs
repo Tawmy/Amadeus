@@ -22,4 +22,14 @@ public class RolesModule : ApplicationCommandModule
     {
         await RolesMsgCommand.RunSlash(ctx, title, description, channel);
     }
+
+    [SlashCommand("postMenu", "Pick a self-assign menu to post in given channel.")]
+    [ModeratorSlash]
+    [SlashRequireBotPermissions(Permissions.SendMessages)]
+    public async Task SlashPostRolesMenu(InteractionContext ctx,
+        [Option("Channel", "Channel to send the message in")]
+        DiscordChannel? channel = null)
+    {
+        await PostRolesMenuCommand.RunSlash(ctx, channel);
+    }
 }

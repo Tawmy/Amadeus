@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Amadeus.Db.Migrations
 {
     [DbContext(typeof(AmadeusContext))]
-    [Migration("20211202222104_Initial")]
+    [Migration("20220213123307_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,9 +48,9 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("name");
 
                     b.HasKey("Id")
-                        .HasName("pk_command_config");
+                        .HasName("pk_command_configs");
 
-                    b.ToTable("command_config", (string)null);
+                    b.ToTable("command_configs", (string)null);
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.CommandConfigDiscordEntityAssignment", b =>
@@ -75,15 +75,15 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("is_blacklist");
 
                     b.HasKey("Id")
-                        .HasName("pk_command_config_discord_entity_assignment");
+                        .HasName("pk_command_config_discord_entity_assignments");
 
                     b.HasIndex("CommandConfigId")
-                        .HasDatabaseName("ix_command_config_discord_entity_assignment_command_config_id");
+                        .HasDatabaseName("ix_command_config_discord_entity_assignments_command_config_id");
 
                     b.HasIndex("DiscordEntityId")
-                        .HasDatabaseName("ix_command_config_discord_entity_assignment_discord_entity_id");
+                        .HasDatabaseName("ix_command_config_discord_entity_assignments_discord_entity_id");
 
-                    b.ToTable("command_config_discord_entity_assignment", (string)null);
+                    b.ToTable("command_config_discord_entity_assignments", (string)null);
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.Config", b =>
@@ -167,6 +167,10 @@ namespace Amadeus.Db.Migrations
                         .HasColumnType("text")
                         .HasColumnName("description");
 
+                    b.Property<decimal>("GuildId")
+                        .HasColumnType("numeric(20,0)")
+                        .HasColumnName("guild_id");
+
                     b.Property<decimal?>("RequiredRoleId")
                         .HasColumnType("numeric(20,0)")
                         .HasColumnName("required_role_id");
@@ -177,12 +181,15 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("title");
 
                     b.HasKey("Id")
-                        .HasName("pk_self_assign_menu");
+                        .HasName("pk_self_assign_menus");
+
+                    b.HasIndex("GuildId")
+                        .HasDatabaseName("ix_self_assign_menus_guild_id");
 
                     b.HasIndex("RequiredRoleId")
-                        .HasDatabaseName("ix_self_assign_menu_required_role_id");
+                        .HasDatabaseName("ix_self_assign_menus_required_role_id");
 
-                    b.ToTable("self_assign_menu", (string)null);
+                    b.ToTable("self_assign_menus", (string)null);
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.SelfAssignMenuDiscordEntityAssignment", b =>
@@ -203,15 +210,15 @@ namespace Amadeus.Db.Migrations
                         .HasColumnName("self_assign_menu_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_self_assign_menu_discord_entity_assignment");
+                        .HasName("pk_self_assign_menu_discord_entity_assignments");
 
                     b.HasIndex("DiscordEntityId")
-                        .HasDatabaseName("ix_self_assign_menu_discord_entity_assignment_discord_entity_id");
+                        .HasDatabaseName("ix_self_assign_menu_discord_entity_assignments_discord_entity_");
 
                     b.HasIndex("SelfAssignMenuId")
-                        .HasDatabaseName("ix_self_assign_menu_discord_entity_assignment_self_assign_menu");
+                        .HasDatabaseName("ix_self_assign_menu_discord_entity_assignments_self_assign_men");
 
-                    b.ToTable("self_assign_menu_discord_entity_assignment", (string)null);
+                    b.ToTable("self_assign_menu_discord_entity_assignments", (string)null);
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.CommandConfigDiscordEntityAssignment", b =>
@@ -221,14 +228,14 @@ namespace Amadeus.Db.Migrations
                         .HasForeignKey("CommandConfigId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_command_config_discord_entity_assignment_command_config_com");
+                        .HasConstraintName("fk_command_config_discord_entity_assignments_command_configs_c");
 
                     b.HasOne("Amadeus.Db.Models.DiscordEntity", "DiscordEntity")
                         .WithMany("CommandConfigDiscordEntityAssignments")
                         .HasForeignKey("DiscordEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_command_config_discord_entity_assignment_discord_entities_d");
+                        .HasConstraintName("fk_command_config_discord_entity_assignments_discord_entities_");
 
                     b.Navigation("CommandConfig");
 
@@ -261,10 +268,19 @@ namespace Amadeus.Db.Migrations
 
             modelBuilder.Entity("Amadeus.Db.Models.SelfAssignMenu", b =>
                 {
+                    b.HasOne("Amadeus.Db.Models.Guild", "Guild")
+                        .WithMany("SelfAssignMenus")
+                        .HasForeignKey("GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_self_assign_menus_guilds_guild_id");
+
                     b.HasOne("Amadeus.Db.Models.DiscordEntity", "RequiredRole")
                         .WithMany("SelfAssignMenus")
                         .HasForeignKey("RequiredRoleId")
-                        .HasConstraintName("fk_self_assign_menu_discord_entities_required_role_id");
+                        .HasConstraintName("fk_self_assign_menus_discord_entities_required_role_id");
+
+                    b.Navigation("Guild");
 
                     b.Navigation("RequiredRole");
                 });
@@ -276,14 +292,14 @@ namespace Amadeus.Db.Migrations
                         .HasForeignKey("DiscordEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_self_assign_menu_discord_entity_assignment_discord_entities");
+                        .HasConstraintName("fk_self_assign_menu_discord_entity_assignments_discord_entitie");
 
                     b.HasOne("Amadeus.Db.Models.SelfAssignMenu", "SelfAssignMenu")
                         .WithMany("SelfAssignMenuDiscordEntityAssignments")
                         .HasForeignKey("SelfAssignMenuId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_self_assign_menu_discord_entity_assignment_self_assign_menu");
+                        .HasConstraintName("fk_self_assign_menu_discord_entity_assignments_self_assign_men");
 
                     b.Navigation("DiscordEntity");
 
@@ -309,6 +325,8 @@ namespace Amadeus.Db.Migrations
                     b.Navigation("Configs");
 
                     b.Navigation("DiscordEntities");
+
+                    b.Navigation("SelfAssignMenus");
                 });
 
             modelBuilder.Entity("Amadeus.Db.Models.SelfAssignMenu", b =>

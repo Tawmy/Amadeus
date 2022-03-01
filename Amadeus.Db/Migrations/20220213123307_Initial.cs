@@ -14,7 +14,7 @@ namespace Amadeus.Db.Migrations
                 .Annotation("Npgsql:Enum:discord_entity_type", "channel,role");
 
             migrationBuilder.CreateTable(
-                name: "command_config",
+                name: "command_configs",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -25,7 +25,7 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_command_config", x => x.id);
+                    table.PrimaryKey("pk_command_configs", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -80,7 +80,7 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "command_config_discord_entity_assignment",
+                name: "command_config_discord_entity_assignments",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -91,15 +91,15 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_command_config_discord_entity_assignment", x => x.id);
+                    table.PrimaryKey("pk_command_config_discord_entity_assignments", x => x.id);
                     table.ForeignKey(
-                        name: "fk_command_config_discord_entity_assignment_command_config_com",
+                        name: "fk_command_config_discord_entity_assignments_command_configs_c",
                         column: x => x.command_config_id,
-                        principalTable: "command_config",
+                        principalTable: "command_configs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_command_config_discord_entity_assignment_discord_entities_d",
+                        name: "fk_command_config_discord_entity_assignments_discord_entities_",
                         column: x => x.discord_entity_id,
                         principalTable: "discord_entities",
                         principalColumn: "id",
@@ -107,27 +107,34 @@ namespace Amadeus.Db.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "self_assign_menu",
+                name: "self_assign_menus",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     title = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: true),
+                    guild_id = table.Column<decimal>(type: "numeric(20,0)", nullable: false),
                     required_role_id = table.Column<decimal>(type: "numeric(20,0)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_self_assign_menu", x => x.id);
+                    table.PrimaryKey("pk_self_assign_menus", x => x.id);
                     table.ForeignKey(
-                        name: "fk_self_assign_menu_discord_entities_required_role_id",
+                        name: "fk_self_assign_menus_discord_entities_required_role_id",
                         column: x => x.required_role_id,
                         principalTable: "discord_entities",
                         principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_self_assign_menus_guilds_guild_id",
+                        column: x => x.guild_id,
+                        principalTable: "guilds",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "self_assign_menu_discord_entity_assignment",
+                name: "self_assign_menu_discord_entity_assignments",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -137,29 +144,29 @@ namespace Amadeus.Db.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_self_assign_menu_discord_entity_assignment", x => x.id);
+                    table.PrimaryKey("pk_self_assign_menu_discord_entity_assignments", x => x.id);
                     table.ForeignKey(
-                        name: "fk_self_assign_menu_discord_entity_assignment_discord_entities",
+                        name: "fk_self_assign_menu_discord_entity_assignments_discord_entitie",
                         column: x => x.discord_entity_id,
                         principalTable: "discord_entities",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_self_assign_menu_discord_entity_assignment_self_assign_menu",
+                        name: "fk_self_assign_menu_discord_entity_assignments_self_assign_men",
                         column: x => x.self_assign_menu_id,
-                        principalTable: "self_assign_menu",
+                        principalTable: "self_assign_menus",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_command_config_discord_entity_assignment_command_config_id",
-                table: "command_config_discord_entity_assignment",
+                name: "ix_command_config_discord_entity_assignments_command_config_id",
+                table: "command_config_discord_entity_assignments",
                 column: "command_config_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_command_config_discord_entity_assignment_discord_entity_id",
-                table: "command_config_discord_entity_assignment",
+                name: "ix_command_config_discord_entity_assignments_discord_entity_id",
+                table: "command_config_discord_entity_assignments",
                 column: "discord_entity_id");
 
             migrationBuilder.CreateIndex(
@@ -173,37 +180,42 @@ namespace Amadeus.Db.Migrations
                 column: "guild_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_self_assign_menu_required_role_id",
-                table: "self_assign_menu",
-                column: "required_role_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_self_assign_menu_discord_entity_assignment_discord_entity_id",
-                table: "self_assign_menu_discord_entity_assignment",
+                name: "ix_self_assign_menu_discord_entity_assignments_discord_entity_",
+                table: "self_assign_menu_discord_entity_assignments",
                 column: "discord_entity_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_self_assign_menu_discord_entity_assignment_self_assign_menu",
-                table: "self_assign_menu_discord_entity_assignment",
+                name: "ix_self_assign_menu_discord_entity_assignments_self_assign_men",
+                table: "self_assign_menu_discord_entity_assignments",
                 column: "self_assign_menu_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_self_assign_menus_guild_id",
+                table: "self_assign_menus",
+                column: "guild_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_self_assign_menus_required_role_id",
+                table: "self_assign_menus",
+                column: "required_role_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "command_config_discord_entity_assignment");
+                name: "command_config_discord_entity_assignments");
 
             migrationBuilder.DropTable(
                 name: "configs");
 
             migrationBuilder.DropTable(
-                name: "self_assign_menu_discord_entity_assignment");
+                name: "self_assign_menu_discord_entity_assignments");
 
             migrationBuilder.DropTable(
-                name: "command_config");
+                name: "command_configs");
 
             migrationBuilder.DropTable(
-                name: "self_assign_menu");
+                name: "self_assign_menus");
 
             migrationBuilder.DropTable(
                 name: "discord_entities");

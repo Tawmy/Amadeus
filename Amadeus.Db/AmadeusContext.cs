@@ -39,9 +39,18 @@ public class AmadeusContext : DbContext
 
     #region DbSets
 
-    public DbSet<DiscordEntity> DiscordEntities => Set<DiscordEntity>();
+    public DbSet<CommandConfig> CommandConfigs => Set<CommandConfig>();
+
+    public DbSet<CommandConfigDiscordEntityAssignment> CommandConfigDiscordEntityAssignments =>
+        Set<CommandConfigDiscordEntityAssignment>();
+
     public DbSet<Config> Configs => Set<Config>();
+    public DbSet<DiscordEntity> DiscordEntities => Set<DiscordEntity>();
     public DbSet<Guild> Guilds => Set<Guild>();
+    public DbSet<SelfAssignMenu> SelfAssignMenus => Set<SelfAssignMenu>();
+
+    public DbSet<SelfAssignMenuDiscordEntityAssignment> SelfAssignMenuDiscordEntityAssignments =>
+        Set<SelfAssignMenuDiscordEntityAssignment>();
 
     #endregion
 }

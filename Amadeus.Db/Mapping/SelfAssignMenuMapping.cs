@@ -10,6 +10,11 @@ public class SelfAssignMenuMapping : IEntityTypeConfiguration<SelfAssignMenu>
     {
         b.HasKey(x => x.Id);
 
+        b.HasOne(x => x.Guild)
+            .WithMany(y => y.SelfAssignMenus)
+            .HasForeignKey(x => x.GuildId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         b.HasOne(x => x.RequiredRole)
             .WithMany(y => y.SelfAssignMenus)
             .HasForeignKey(x => x.RequiredRoleId)
