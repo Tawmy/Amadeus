@@ -8,7 +8,7 @@ public class SelfAssignMenu
     public string? Description { get; set; }
 
     public ulong GuildId { get; set; }
-    public Guild Guild { get; set; }
+    public Guild Guild { get; set; } = null!;
 
     public ulong? RequiredRoleId { get; set; }
     public DiscordEntity? RequiredRole { get; set; }
